@@ -8,8 +8,14 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const connectDB = async () => {
     try {
-        const conn = await mongoose_1.default.connect(process.env.MONGODB_URI);
-        console.log(`✅ MongoDB connected: ${conn.connection.host}`);
+        const uri = process.env.MONGODB_URI_CIVICPULSE || process.env.MONGODB_URI;
+        if (!uri) {
+            throw new Error('Missing MongoDB URI. Set MONGODB_URI_CIVICPULSE or MONGODB_URI.');
+        }
+        const conn = await mongoose_1.default.connect(uri, {
+            dbName: process.env.MONGODB_DB_NAME,
+        });
+        console.log(`✅ MongoDB connected: ${conn.connection.host}/${conn.connection.name}`);
     }
     catch (error) {
         console.error('❌ MongoDB connection error:', error);

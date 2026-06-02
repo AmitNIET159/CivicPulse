@@ -179,6 +179,10 @@ NODE_ENV=development
 
 # MongoDB Atlas
 MONGODB_URI=mongodb+srv://<user>:<pass>@<cluster>.mongodb.net/civicpulse
+# Optional alternate MongoDB URI specifically for CivicPulse data storage
+MONGODB_URI_CIVICPULSE=
+# Optional database name override if the URI does not include one
+MONGODB_DB_NAME=
 
 # JWT Secrets (generate with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")
 JWT_ACCESS_SECRET=your_access_secret_here

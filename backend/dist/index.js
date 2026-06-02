@@ -17,7 +17,7 @@ const official_routes_1 = __importDefault(require("./routes/official.routes"));
 const stats_routes_1 = __importDefault(require("./routes/stats.routes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 // Connect to MongoDB
 (0, db_1.default)();
 // Middleware

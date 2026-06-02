@@ -67,7 +67,14 @@ const addresses = [
 
 async function seed() {
   try {
-    await mongoose.connect(process.env.MONGODB_URI as string);
+    const uri = process.env.MONGODB_URI_CIVICPULSE || process.env.MONGODB_URI;
+    if (!uri) {
+      throw new Error('Missing MongoDB URI. Set MONGODB_URI_CIVICPULSE or MONGODB_URI.');
+    }
+
+    await mongoose.connect(uri, {
+      dbName: process.env.MONGODB_DB_NAME,
+    });
     console.log('✅ Connected to MongoDB');
 
     // Clear existing data
