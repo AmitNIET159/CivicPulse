@@ -91,7 +91,6 @@
 
 </div>
 
-> **💡 Tip:** Place your screenshots in a `screenshots/` folder at the project root. Use filenames matching those above.
 
 ---
 
