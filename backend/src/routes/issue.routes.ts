@@ -20,7 +20,7 @@ router.post(
   authenticate,
   reportLimiter,
   [
-    body('title').trim().isLength({ min: 3, max: 100 }).withMessage('Title must be 3-100 characters'),
+    body('title').optional().trim().isLength({ max: 100 }).withMessage('Title cannot exceed 100 characters'),
     body('description').trim().isLength({ min: 10, max: 1000 }),
     body('category').isIn([
       'pothole', 'streetlight', 'garbage', 'drainage', 'water_supply',

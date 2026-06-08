@@ -9,6 +9,12 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
+    // Minimum file size: 5KB
+    if (file.size < 5 * 1024) {
+      res.status(400).json({ message: 'Image must be at least 5KB.' });
+      return;
+    }
+
     const result: any = await new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
@@ -31,6 +37,7 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
       thumbnail: result.eager?.[0]?.secure_url || result.secure_url,
     });
   } catch (error: any) {
+    console.error('Cloudinary upload error:', error.message, error.http_code || '', error);
     res.status(500).json({ message: 'Upload failed.', error: error.message });
   }
 };

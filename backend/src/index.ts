@@ -21,8 +21,19 @@ const PORT = process.env.PORT || 5001;
 connectDB();
 
 // Middleware
+const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:3000')
+  .split(',')
+  .map(origin => origin.trim());
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS policy: Origin ${origin} not allowed`));
+    }
+  },
   credentials: true,
 }));
 app.use(express.json({ limit: '10mb' }));

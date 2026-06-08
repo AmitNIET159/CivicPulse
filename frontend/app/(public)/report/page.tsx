@@ -24,7 +24,6 @@ export default function ReportPage() {
   // Form state
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
   const [address, setAddress] = useState('');
-  const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
   const [photos, setPhotos] = useState<Photo[]>([]);
@@ -60,14 +59,16 @@ export default function ReportPage() {
 
   const handleSubmit = async () => {
     if (!coordinates) { toast.error('Please select a location'); return; }
-    if (!title.trim()) { toast.error('Please add a title'); return; }
     if (!category) { toast.error('Please select a category'); return; }
     if (!description.trim()) { toast.error('Please add a description'); return; }
+    if (photos.length < 1) { toast.error('Please upload at least 1 photo'); return; }
+    if (photos.length > 5) { toast.error('Maximum 5 photos allowed'); return; }
 
     setSubmitting(true);
     try {
+      const autoTitle = description.trim().slice(0, 100);
       const res = await api.post('/api/issues', {
-        title: title.trim(),
+        title: autoTitle,
         description: description.trim(),
         category,
         coordinates,
@@ -156,21 +157,6 @@ export default function ReportPage() {
               <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
                 <h2 className="text-xl font-semibold">Issue Details</h2>
                 <div>
-                  <label className="text-sm text-text-muted mb-1 block">Title</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value.slice(0, 100))}
-                      placeholder="Short description of the issue"
-                      className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary/50"
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-text-muted">
-                      {title.length}/100
-                    </span>
-                  </div>
-                </div>
-                <div>
                   <label className="text-sm text-text-muted mb-1 block">Category</label>
                   <div className="grid grid-cols-3 gap-2">
                     {Object.entries(CATEGORY_CONFIG).map(([key, config]) => (
@@ -210,7 +196,7 @@ export default function ReportPage() {
             {step === 3 && (
               <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
                 <h2 className="text-xl font-semibold">Add Photos</h2>
-                <p className="text-sm text-text-muted">Upload photos of the issue (optional but recommended).</p>
+                <p className="text-sm text-text-muted">Upload photos of the issue (at least 1 required, max 5).</p>
                 <IssueFormPhotoUpload photos={photos} onPhotosChange={setPhotos} />
               </motion.div>
             )}
@@ -220,10 +206,6 @@ export default function ReportPage() {
               <motion.div key="step4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
                 <h2 className="text-xl font-semibold">Review & Submit</h2>
                 <div className="space-y-3">
-                  <div className="flex justify-between py-2 border-b border-border">
-                    <span className="text-text-muted text-sm">Title</span>
-                    <span className="text-sm font-medium">{title}</span>
-                  </div>
                   <div className="flex justify-between py-2 border-b border-border">
                     <span className="text-text-muted text-sm">Category</span>
                     <span className="text-sm font-medium">{CATEGORY_CONFIG[category as keyof typeof CATEGORY_CONFIG]?.label || 'N/A'}</span>

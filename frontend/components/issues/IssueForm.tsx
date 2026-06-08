@@ -18,8 +18,8 @@ export default function IssueFormPhotoUpload({ photos, onPhotosChange }: IssueFo
   const [progress, setProgress] = useState(0);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    if (photos.length + acceptedFiles.length > 3) {
-      toast.error('Maximum 3 photos allowed');
+    if (photos.length + acceptedFiles.length > 5) {
+      toast.error('Maximum 5 photos allowed');
       return;
     }
 
@@ -28,6 +28,10 @@ export default function IssueFormPhotoUpload({ photos, onPhotosChange }: IssueFo
 
     for (let i = 0; i < acceptedFiles.length; i++) {
       const file = acceptedFiles[i];
+      if (file.size < 5 * 1024) {
+        toast.error(`${file.name} is too small (minimum 5KB)`);
+        continue;
+      }
       if (file.size > 5 * 1024 * 1024) {
         toast.error(`${file.name} exceeds 5MB limit`);
         continue;
@@ -39,7 +43,7 @@ export default function IssueFormPhotoUpload({ photos, onPhotosChange }: IssueFo
         const formData = new FormData();
         formData.append('image', file);
         const res = await api.post('/api/upload/image', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
+          headers: { 'Content-Type': undefined },
         });
         newPhotos.push(res.data);
       } catch {
@@ -59,9 +63,9 @@ export default function IssueFormPhotoUpload({ photos, onPhotosChange }: IssueFo
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { 'image/*': ['.jpeg', '.jpg', '.png', '.webp'] },
-    maxFiles: 3 - photos.length,
-    disabled: uploading || photos.length >= 3,
+    accept: { 'image/*': ['.jpeg', '.jpg', '.png', '.webp', '.avif', '.gif'] },
+    maxFiles: 5 - photos.length,
+    disabled: uploading || photos.length >= 5,
   });
 
   return (
@@ -72,7 +76,7 @@ export default function IssueFormPhotoUpload({ photos, onPhotosChange }: IssueFo
         className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
           isDragActive
             ? 'border-primary bg-primary/5'
-            : photos.length >= 3
+            : photos.length >= 5
             ? 'border-border/30 opacity-50 cursor-not-allowed'
             : 'border-border hover:border-primary/50'
         }`}
@@ -97,7 +101,7 @@ export default function IssueFormPhotoUpload({ photos, onPhotosChange }: IssueFo
               {isDragActive ? 'Drop photos here' : 'Drag & drop photos or click to browse'}
             </p>
             <p className="text-xs text-text-muted">
-              Max 3 photos, 5MB each • JPEG, PNG, WebP
+              1–5 photos, 5KB–5MB each • JPEG, PNG, WebP, AVIF, GIF
             </p>
           </div>
         )}

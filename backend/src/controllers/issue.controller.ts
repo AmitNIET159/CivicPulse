@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { validationResult } from 'express-validator';
 import Issue from '../models/Issue';
 import Vote from '../models/Vote';
 import User from '../models/User';
@@ -163,6 +164,13 @@ export const getIssueById = async (req: Request, res: Response): Promise<void> =
 // POST /api/issues — Create new issue (auth required)
 export const createIssue = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
+    // Check express-validator results
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ message: errors.array().map(e => e.msg).join(', '), errors: errors.array() });
+      return;
+    }
+
     if (!req.user) {
       res.status(401).json({ message: 'Authentication required.' });
       return;
@@ -170,13 +178,26 @@ export const createIssue = async (req: AuthRequest, res: Response): Promise<void
 
     const { title, description, category, coordinates, address, ward, photos } = req.body;
 
+    // Auto-generate title from description if not provided
+    const issueTitle = (title && title.trim()) ? title.trim() : description.trim().slice(0, 100);
+
     if (!coordinates || !coordinates.lng || !coordinates.lat) {
       res.status(400).json({ message: 'Location coordinates are required.' });
       return;
     }
 
+    // Validate photo count: minimum 1, maximum 5
+    if (!photos || !Array.isArray(photos) || photos.length < 1) {
+      res.status(400).json({ message: 'At least 1 photo is required.' });
+      return;
+    }
+    if (photos.length > 5) {
+      res.status(400).json({ message: 'Maximum 5 photos allowed.' });
+      return;
+    }
+
     const issue = new Issue({
-      title,
+      title: issueTitle,
       description,
       category,
       location: {
