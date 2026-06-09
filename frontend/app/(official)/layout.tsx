@@ -38,9 +38,7 @@ export default function OfficialLayout({ children }: { children: React.ReactNode
       <aside className="w-64 border-r border-border bg-surface/50 flex-shrink-0 sticky top-0 h-screen overflow-y-auto hidden lg:block">
         <div className="p-5">
           <Link href="/" className="flex items-center gap-2 mb-8 group">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-white font-bold text-sm">CP</span>
-            </div>
+            <img src="/logo.jpeg" alt="CivicPulse Logo" className="w-8 h-8 rounded-lg object-cover" />
             <div>
               <span className="text-sm font-bold text-text-primary block">CivicPulse</span>
               <span className="text-xs text-warning font-medium flex items-center gap-1">
@@ -100,9 +98,7 @@ export default function OfficialLayout({ children }: { children: React.ReactNode
         {/* Mobile top bar */}
         <div className="lg:hidden glass-card rounded-none border-l-0 border-r-0 border-t-0 p-3 flex items-center justify-between sticky top-0 z-40">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded bg-primary flex items-center justify-center">
-              <span className="text-white font-bold text-xs">CP</span>
-            </div>
+            <img src="/logo.jpeg" alt="CivicPulse Logo" className="w-7 h-7 rounded object-cover" />
             <span className="text-sm font-bold">Dashboard</span>
           </div>
           <div className="flex gap-1 overflow-x-auto">

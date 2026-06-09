@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" width="100%" height="100%">
+
+<defs>
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="70%" fx="50%" fy="50%">
+        <stop offset="0%" stop-color="#10323c" />
+        <stop offset="100%" stop-color="#040e11" />
+    </radialGradient>
+    
+    <linearGradient id="bldgFill" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#4ff0f0" stop-opacity="0.15" />
+        <stop offset="100%" stop-color="#4ff0f0" stop-opacity="0.0" />
+    </linearGradient>
+
+    <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#a8fafa" />
+        <stop offset="40%" stop-color="#4ff0f0" />
+        <stop offset="100%" stop-color="#148282" />
+    </linearGradient>
+
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="4" result="blur1" />
+        <feGaussianBlur stdDeviation="12" result="blur2" />
+        <feMerge>
+            <feMergeNode in="blur2" />
+            <feMergeNode in="blur1" />
+            <feMergeNode in="SourceGraphic" />
+        </feMerge>
+    </filter>
+    
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation="4" result="blur" />
+        <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+        </feMerge>
+    </filter>
+</defs>
+
+<rect width="1000" height="800" fill="url(#bgGrad)" />
+<g opacity="0.4">
+<line x1="0" y1="520" x2="1000" y2="520" stroke="#0c434f" stroke-width="2" />
+<line x1="0" y1="540" x2="1000" y2="540" stroke="#0c434f" stroke-width="2" />
+<line x1="0" y1="570" x2="1000" y2="570" stroke="#0c434f" stroke-width="2" />
+<line x1="0" y1="610" x2="1000" y2="610" stroke="#0c434f" stroke-width="2" />
+<line x1="0" y1="660" x2="1000" y2="660" stroke="#0c434f" stroke-width="2" />
+<line x1="0" y1="720" x2="1000" y2="720" stroke="#0c434f" stroke-width="2" />
+<line x1="0" y1="790" x2="1000" y2="790" stroke="#0c434f" stroke-width="2" />
+<line x1="-1200" y1="520" x2="-4260.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-1140" y1="520" x2="-4092.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-1080" y1="520" x2="-3924.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-1020" y1="520" x2="-3756.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-960" y1="520" x2="-3587.9999999999995" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-900" y1="520" x2="-3419.9999999999995" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-840" y1="520" x2="-3251.9999999999995" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-780" y1="520" x2="-3084.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-720" y1="520" x2="-2916.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-660" y1="520" x2="-2748.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-600" y1="520" x2="-2580.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-540" y1="520" x2="-2412.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-480" y1="520" x2="-2244.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-420" y1="520" x2="-2076.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-360" y1="520" x2="-1908.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-300" y1="520" x2="-1740.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-240" y1="520" x2="-1572.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-180" y1="520" x2="-1403.9999999999998" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-120" y1="520" x2="-1236.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="-60" y1="520" x2="-1068.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="0" y1="520" x2="-900.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="60" y1="520" x2="-732.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="120" y1="520" x2="-564.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="180" y1="520" x2="-396.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="240" y1="520" x2="-228.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="300" y1="520" x2="-60.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="360" y1="520" x2="108.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="420" y1="520" x2="276.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="480" y1="520" x2="444.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="540" y1="520" x2="612.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="600" y1="520" x2="780.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="660" y1="520" x2="948.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="720" y1="520" x2="1116.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="780" y1="520" x2="1284.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="840" y1="520" x2="1452.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="900" y1="520" x2="1620.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="960" y1="520" x2="1788.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="1020" y1="520" x2="1956.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="1080" y1="520" x2="2124.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="1140" y1="520" x2="2292.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="1200" y1="520" x2="2460.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="1260" y1="520" x2="2628.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="1320" y1="520" x2="2796.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="1380" y1="520" x2="2964.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="1440" y1="520" x2="3132.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="1500" y1="520" x2="3300.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="1560" y1="520" x2="3468.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="1620" y1="520" x2="3636.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="1680" y1="520" x2="3804.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="1740" y1="520" x2="3972.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="1800" y1="520" x2="4140.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="1860" y1="520" x2="4308.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="1920" y1="520" x2="4476.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="1980" y1="520" x2="4644.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="2040" y1="520" x2="4812.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="2100" y1="520" x2="4980.0" y2="800" stroke="#0c434f" stroke-width="2" />
+<line x1="2160" y1="520" x2="5148.0" y2="800" stroke="#0c434f" stroke-width="2" />
+</g>
+<path d="M 200,500 L 200,280 L 220,280 L 220,240 L 235,240 L 235,160 L 245,160 L 245,240 L 260,240 L 260,280 L 320,280 L 320,500 Z" fill="url(#bldgFill)" />
+<path d="M 340,500 L 340,360 L 370,360 L 370,290 L 390,290 L 390,240 L 460,240 L 460,500 Z" fill="url(#bldgFill)" />
+<path d="M 480,500 L 480,320 L 570,250 L 660,320 L 660,500 Z" fill="url(#bldgFill)" />
+<g fill="none" stroke="#4ff0f0" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
+<path d="M 220,280 L 220,500 M 260,280 L 260,500" stroke-width="3" opacity="0.6" />
+<line x1="390" y1="400" x2="445" y2="400" stroke-width="5" />
+<line x1="390" y1="440" x2="445" y2="440" stroke-width="5" />
+<path d="M 200,500 L 200,280 L 220,280 L 220,240 L 235,240 L 235,160 L 245,160 L 245,240 L 260,240 L 260,280 L 320,280 L 320,500" stroke-width="5" />
+<path d="M 340,500 L 340,360 L 370,360 L 370,290 L 390,290 L 390,240 L 460,240 L 460,500" stroke-width="5" />
+<path d="M 480,500 L 480,320 L 570,250 L 660,320 L 660,500" stroke-width="5" />
+<path d="M 50,500 L 500,500 L 520,430 L 545,560 L 585,280 L 625,620 L 655,500 L 710,500" stroke-width="8" />
+</g>
+<path d="M 730,510 C 660,450 630,380 660,330 C 690,280 730,310 730,360 C 730,310 770,280 800,330 C 830,380 800,450 730,510 Z" fill="url(#heartGrad)" filter="url(#glow)" stroke="#a8fafa" stroke-width="2"/>
+<g fill="#4ff0f0" filter="url(#softGlow)">
+<polygon points="852.1,353.0 852.1,367.0 840.0,374.0 827.9,367.0 827.9,353.0 840.0,346.0" />
+<polygon points="882.1,333.0 882.1,347.0 870.0,354.0 857.9,347.0 857.9,333.0 870.0,326.0" />
+<polygon points="882.1,383.0 882.1,397.0 870.0,404.0 857.9,397.0 857.9,383.0 870.0,376.0" />
+<polygon points="912.1,358.0 912.1,372.0 900.0,379.0 887.9,372.0 887.9,358.0 900.0,351.0" />
+<polygon points="852.1,403.0 852.1,417.0 840.0,424.0 827.9,417.0 827.9,403.0 840.0,396.0" />
+</g>
+</svg>

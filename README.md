@@ -431,6 +431,6 @@ Distributed under the **MIT License**. See `LICENSE` for more information.
 
 <br/>
 
-[![GitHub stars](https://img.shields.io/github/stars/your-username/civicpulse?style=social)](https://github.com/your-username/civicpulse)
+[![GitHub stars](https://img.shields.io/github/stars/AmitNIET159/CivicPulse?style=social)](https://github.com/your-username/civicpulse)
 
 </div>
