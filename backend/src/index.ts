@@ -15,6 +15,7 @@ import statsRoutes from './routes/stats.routes';
 dotenv.config();
 
 const app = express();
+app.set('trust proxy', 1); // Trust first proxy (Render reverse proxy)
 const PORT = process.env.PORT || 5001;
 
 // Connect to MongoDB
