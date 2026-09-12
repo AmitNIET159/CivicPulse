@@ -6,8 +6,9 @@ import { Issue } from '@/types';
 import api from '@/lib/api';
 import IssueCard from '@/components/issues/IssueCard';
 import IssueFilter from '@/components/issues/IssueFilter';
-import { Loader2, FileText } from 'lucide-react';
+import { Loader2, FileText, Hexagon } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
+import ScrollReveal from '@/components/ui/ScrollReveal';
 
 function IssuesContent() {
   const searchParams = useSearchParams();
@@ -64,8 +65,10 @@ function IssuesContent() {
         animate={{ opacity: 1, y: 0 }}
       >
         <div className="flex items-center gap-3 mb-6">
-          <FileText className="w-6 h-6 text-primary" />
-          <h1 className="text-3xl font-bold">Issues</h1>
+          <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
+            <Hexagon className="w-6 h-6 text-primary" />
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight">Issues</h1>
         </div>
 
         <IssueFilter
@@ -80,9 +83,11 @@ function IssuesContent() {
           onClear={clearFilters}
         />
 
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 perspective-[1000px]">
           {issues.map((issue, i) => (
-            <IssueCard key={issue._id} issue={issue} index={i} />
+            <ScrollReveal key={issue._id} direction="up" delay={i * 0.05} className="h-full">
+              <IssueCard issue={issue} index={i} />
+            </ScrollReveal>
           ))}
         </div>
 
@@ -94,8 +99,10 @@ function IssuesContent() {
 
         {!loading && issues.length === 0 && (
           <div className="text-center py-16">
-            <FileText className="w-12 h-12 mx-auto text-text-muted mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No issues found</h3>
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-surface-2 flex items-center justify-center border border-white/[0.06]">
+              <FileText className="w-8 h-8 text-text-muted" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2 text-text-primary">No issues found</h3>
             <p className="text-text-muted text-sm">Try adjusting your filters</p>
           </div>
         )}
@@ -104,7 +111,7 @@ function IssuesContent() {
           <div className="flex justify-center py-8">
             <button
               onClick={loadMore}
-              className="px-6 py-2.5 border border-border rounded-xl text-sm font-medium hover:bg-surface transition-colors"
+              className="px-6 py-2.5 border border-white/[0.06] rounded-xl text-sm font-medium hover:bg-surface hover:border-primary/30 transition-all"
             >
               Load More
             </button>

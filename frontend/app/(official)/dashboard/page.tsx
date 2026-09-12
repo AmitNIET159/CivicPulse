@@ -26,7 +26,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-text-primary">Dashboard</h1>
         <p className="text-sm text-text-muted mt-1">Welcome back, {user?.name}. Here&apos;s your ward overview.</p>
       </div>
 
@@ -34,10 +34,10 @@ export default function DashboardPage() {
       {stats && (
         <StatsGrid
           stats={[
-            { label: 'Pending Issues', value: stats.pending, icon: <AlertCircle className="w-5 h-5" />, color: '#EF4444' },
-            { label: 'Resolved This Month', value: stats.resolved, icon: <CheckCircle className="w-5 h-5" />, color: '#10B981' },
-            { label: 'Avg Resolution Time', value: stats.avgResolutionTime, icon: <Clock className="w-5 h-5" />, color: '#F59E0B', suffix: ' days' },
-            { label: 'Total Issues', value: stats.totalIssues, icon: <FileText className="w-5 h-5" />, color: '#3B82F6' },
+            { label: 'Pending Issues', value: stats.pending, icon: <AlertCircle className="w-5 h-5" />, color: '#F87171' },
+            { label: 'Resolved This Month', value: stats.resolved, icon: <CheckCircle className="w-5 h-5" />, color: '#4ADE80' },
+            { label: 'Avg Resolution Time', value: stats.avgResolutionTime, icon: <Clock className="w-5 h-5" />, color: '#FBBF24', suffix: ' days' },
+            { label: 'Total Issues', value: stats.totalIssues, icon: <FileText className="w-5 h-5" />, color: '#E8943A' },
           ]}
         />
       )}
@@ -47,8 +47,8 @@ export default function DashboardPage() {
 
       {/* Map */}
       <div className="glass-card overflow-hidden">
-        <div className="p-4 border-b border-border">
-          <h3 className="text-lg font-semibold">Ward Map</h3>
+        <div className="p-4 border-b border-white/[0.06]">
+          <h3 className="text-lg font-semibold text-text-primary">Ward Map</h3>
           <p className="text-xs text-text-muted mt-1">All issues in your jurisdiction</p>
         </div>
         <div className="h-[400px]">

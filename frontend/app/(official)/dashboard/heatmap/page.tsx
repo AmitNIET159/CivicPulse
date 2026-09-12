@@ -28,8 +28,9 @@ export default function HeatmapPage() {
         zoom: 12,
       });
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
+        className: 'map-tiles-dark',
       }).addTo(map);
 
       mapRef.current = map;
@@ -64,7 +65,7 @@ export default function HeatmapPage() {
       radius: 25,
       blur: 15,
       maxZoom: 17,
-      gradient: { 0.2: '#3B82F6', 0.4: '#8B5CF6', 0.6: '#F59E0B', 0.8: '#EF4444', 1.0: '#DC2626' },
+      gradient: { 0.2: '#60A5FA', 0.4: '#E8943A', 0.6: '#FBBF24', 0.8: '#F87171', 1.0: '#DC2626' },
     }).addTo(mapRef.current);
   }, [points, mapReady]);
 
@@ -72,7 +73,7 @@ export default function HeatmapPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2"><Flame className="w-6 h-6 text-danger" /> Heatmap</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2 text-text-primary"><Flame className="w-6 h-6 text-primary" /> Heatmap</h1>
           <p className="text-sm text-text-muted mt-1">Problem density visualization. {points.length} data points.</p>
         </div>
       </div>
@@ -82,7 +83,7 @@ export default function HeatmapPage() {
         <select
           value={days}
           onChange={(e) => setDays(e.target.value)}
-          className="bg-background border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary/50"
+          className="bg-[#0A0A0A] border border-white/[0.06] rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary/50"
         >
           <option value="">All Time</option>
           <option value="7">Last 7 Days</option>
@@ -93,7 +94,7 @@ export default function HeatmapPage() {
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="bg-background border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary/50"
+          className="bg-[#0A0A0A] border border-white/[0.06] rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary/50"
         >
           <option value="">All Categories</option>
           {Object.entries(CATEGORY_CONFIG).map(([key, config]) => (

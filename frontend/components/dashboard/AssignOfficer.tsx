@@ -45,7 +45,7 @@ export default function AssignOfficer({ issueId, currentAssignee, onAssign }: As
 
   return (
     <div className="glass-card p-5 space-y-4">
-      <h3 className="text-lg font-semibold flex items-center gap-2">
+      <h3 className="text-lg font-semibold flex items-center gap-2 text-text-primary">
         <UserCheck className="w-5 h-5 text-primary" />
         Assign Officer
       </h3>
@@ -59,7 +59,7 @@ export default function AssignOfficer({ issueId, currentAssignee, onAssign }: As
       <select
         value={selectedId}
         onChange={(e) => setSelectedId(e.target.value)}
-        className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary/50"
+        className="w-full bg-[#0A0A0A] border border-white/[0.06] rounded-lg px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary/50"
       >
         <option value="">Select an officer...</option>
         {officials.map((o) => (

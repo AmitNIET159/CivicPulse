@@ -59,31 +59,31 @@ export default function IssueMap({
         // Accuracy circle
         userCircleRef.current = L.circle([latitude, longitude], {
           radius: Math.min(accuracy, 500),
-          color: '#3B82F6',
-          fillColor: '#3B82F6',
+          color: '#E8943A',
+          fillColor: '#E8943A',
           fillOpacity: 0.08,
           weight: 1,
           opacity: 0.3,
         }).addTo(map);
 
-        // Pulsing blue dot
+        // Pulsing amber dot
         const userIcon = L.divIcon({
           className: 'user-location-marker',
           html: `
             <div style="position:relative;width:20px;height:20px;">
               <div style="
                 position:absolute;inset:0;
-                background:rgba(59,130,246,0.25);
+                background:rgba(232,148,58,0.25);
                 border-radius:50%;
                 animation:userPulse 2s ease-out infinite;
               "></div>
               <div style="
                 position:absolute;top:4px;left:4px;
                 width:12px;height:12px;
-                background:#3B82F6;
+                background:#E8943A;
                 border:2.5px solid white;
                 border-radius:50%;
-                box-shadow:0 0 8px rgba(59,130,246,0.6);
+                box-shadow:0 0 8px rgba(232,148,58,0.6);
               "></div>
             </div>`,
           iconSize: [20, 20],
@@ -133,9 +133,10 @@ export default function IssueMap({
     // Add zoom control to bottom-right
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Dark tile layer
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    // Free OSM tiles with CSS filter for dark mode (Carto now requires API key)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
+      className: 'map-tiles-dark',
     }).addTo(map);
 
     mapRef.current = map;
@@ -223,7 +224,7 @@ export default function IssueMap({
           </div>
           <a href="/issues/${issue._id}" style="
             display: block; text-align: center; margin-top: 8px;
-            padding: 6px 12px; background: #3B82F6; color: white;
+            padding: 6px 12px; background: #E8943A; color: white;
             border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: 500;
           ">View Details</a>
         </div>
@@ -256,10 +257,10 @@ export default function IssueMap({
         className: 'selected-marker',
         html: `<div style="
           width: 40px; height: 40px;
-          background: #3B82F6;
+          background: #E8943A;
           border: 3px solid white;
           border-radius: 50%;
-          box-shadow: 0 0 20px rgba(59,130,246,0.5);
+          box-shadow: 0 0 20px rgba(232,148,58,0.5);
           animation: pulse 2s infinite;
         "></div>`,
         iconSize: [40, 40],
@@ -280,8 +281,15 @@ export default function IssueMap({
       <div
         ref={mapContainerRef}
         style={{ height: '100%', width: '100%' }}
-        className="rounded-xl overflow-hidden"
+        className="rounded-xl overflow-hidden shadow-inner"
       />
+      
+      {/* 3D HUD Overlay elements */}
+      <div className="absolute inset-0 z-[400] pointer-events-none rounded-xl border border-white/5 mix-blend-overlay shadow-[inset_0_0_50px_rgba(0,0,0,0.8)]" />
+      <div className="absolute top-4 left-4 w-12 h-12 border-t-2 border-l-2 border-primary/40 rounded-tl-xl z-[400] pointer-events-none" />
+      <div className="absolute top-4 right-4 w-12 h-12 border-t-2 border-r-2 border-primary/40 rounded-tr-xl z-[400] pointer-events-none" />
+      <div className="absolute bottom-4 left-4 w-12 h-12 border-b-2 border-l-2 border-primary/40 rounded-bl-xl z-[400] pointer-events-none" />
+      <div className="absolute bottom-4 right-4 w-12 h-12 border-b-2 border-r-2 border-primary/40 rounded-br-xl z-[400] pointer-events-none" />
 
       {/* Locate Me button */}
       {interactive && showUserLocation && (
@@ -307,7 +315,7 @@ export default function IssueMap({
           }}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLButtonElement).style.background = '#334155';
-            (e.currentTarget as HTMLButtonElement).style.borderColor = '#3B82F6';
+            (e.currentTarget as HTMLButtonElement).style.borderColor = '#E8943A';
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLButtonElement).style.background = '#1e293b';
@@ -319,7 +327,7 @@ export default function IssueMap({
             height="18"
             viewBox="0 0 24 24"
             fill="none"
-            stroke={userLocation ? '#3B82F6' : '#94a3b8'}
+            stroke={userLocation ? '#E8943A' : '#94a3b8'}
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"

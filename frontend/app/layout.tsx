@@ -16,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <meta name="color-scheme" content="dark" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/favicon.svg" />
         <link
@@ -37,13 +38,13 @@ export default function RootLayout({
           position="top-right"
           toastOptions={{
             style: {
-              background: '#111827',
-              color: '#F9FAFB',
-              border: '1px solid #1F2937',
+              background: '#141414',
+              color: '#F5F0EB',
+              border: '1px solid rgba(255,255,255,0.06)',
               borderRadius: '12px',
             },
-            success: { iconTheme: { primary: '#10B981', secondary: '#111827' } },
-            error: { iconTheme: { primary: '#EF4444', secondary: '#111827' } },
+            success: { iconTheme: { primary: '#E8943A', secondary: '#141414' } },
+            error: { iconTheme: { primary: '#F87171', secondary: '#141414' } },
           }}
         />
         {children}

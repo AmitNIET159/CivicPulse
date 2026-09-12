@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { LayoutDashboard, FileText, BarChart3, Map, Users, ArrowLeft, Shield, LogOut } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
+import { cn } from '@/lib/utils';
 
 export default function OfficialLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -35,14 +36,14 @@ export default function OfficialLayout({ children }: { children: React.ReactNode
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
-      <aside className="w-64 border-r border-border bg-surface/50 flex-shrink-0 sticky top-0 h-screen overflow-y-auto hidden lg:block">
-        <div className="p-5">
+      <aside className="w-64 border-r border-white/[0.06] bg-[#0A0A0A] flex-shrink-0 sticky top-0 h-screen overflow-y-auto hidden lg:flex flex-col relative before:absolute before:inset-0 before:bg-[linear-gradient(135deg,#2A2A2A,#1A1A1A,#2A2A2A)] before:opacity-10 before:pointer-events-none">
+        <div className="p-5 relative z-10">
           <Link href="/" className="flex items-center gap-2 mb-8 group">
             <img src="/logo.jpeg" alt="CivicPulse Logo" className="w-8 h-8 rounded-lg object-cover" />
             <div>
-              <span className="text-sm font-bold text-text-primary block">CivicPulse</span>
-              <span className="text-xs text-warning font-medium flex items-center gap-1">
-                <Shield className="w-3 h-3" />
+              <span className="text-sm font-bold text-text-primary block">CivicPulse<span className="text-primary">.</span></span>
+              <span className="text-xs text-primary font-medium flex items-center gap-1">
+                <Shield className="w-3 h-3 text-primary" />
                 {user.role === 'admin' ? 'Admin' : 'Official'}
               </span>
             </div>
@@ -55,11 +56,12 @@ export default function OfficialLayout({ children }: { children: React.ReactNode
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                  className={cn(
+                    "flex items-center gap-2 px-3 py-2.5 text-sm font-medium transition-all border-l-2",
                     isActive
-                      ? 'bg-primary/10 text-primary border border-primary/20'
-                      : 'text-text-muted hover:text-text-primary hover:bg-background'
-                  }`}
+                      ? "text-primary border-primary bg-surface-2/20"
+                      : "text-text-muted border-transparent hover:text-text-primary hover:bg-surface-2/10"
+                  )}
                 >
                   {item.icon}
                   {item.label}
@@ -69,18 +71,18 @@ export default function OfficialLayout({ children }: { children: React.ReactNode
           </nav>
         </div>
 
-        <div className="p-5 mt-auto border-t border-border">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold">
+        <div className="p-5 mt-auto border-t border-white/[0.06] relative z-10">
+          <div className="mb-3 p-3 rounded-lg border border-white/[0.06] bg-[linear-gradient(135deg,#2A2A2A,#1A1A1A,#2A2A2A)] flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold shrink-0">
               {user.name[0]}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user.name}</p>
+              <p className="text-sm font-medium truncate text-text-primary">{user.name}</p>
               <p className="text-xs text-text-muted truncate">{user.ward || user.department}</p>
             </div>
           </div>
           <div className="flex gap-2">
-            <Link href="/" className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 text-xs text-text-muted hover:text-text-primary border border-border rounded-lg hover:bg-background transition-colors">
+            <Link href="/" className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 text-xs text-text-muted hover:text-text-primary border border-white/[0.06] rounded-lg hover:bg-surface-2/50 transition-colors">
               <ArrowLeft className="w-3 h-3" /> Public
             </Link>
             <button
@@ -99,7 +101,7 @@ export default function OfficialLayout({ children }: { children: React.ReactNode
         <div className="lg:hidden glass-card rounded-none border-l-0 border-r-0 border-t-0 p-3 flex items-center justify-between sticky top-0 z-40">
           <div className="flex items-center gap-2">
             <img src="/logo.jpeg" alt="CivicPulse Logo" className="w-7 h-7 rounded object-cover" />
-            <span className="text-sm font-bold">Dashboard</span>
+            <span className="text-sm font-bold text-text-primary">Dashboard</span>
           </div>
           <div className="flex gap-1 overflow-x-auto">
             {navItems.map((item) => {
@@ -108,7 +110,10 @@ export default function OfficialLayout({ children }: { children: React.ReactNode
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`p-2 rounded-lg ${isActive ? 'bg-primary/10 text-primary' : 'text-text-muted'}`}
+                  className={cn(
+                    "p-2 rounded-lg transition-colors border-b-2",
+                    isActive ? "text-primary border-primary bg-primary/10" : "text-text-muted border-transparent"
+                  )}
                 >
                   {item.icon}
                 </Link>

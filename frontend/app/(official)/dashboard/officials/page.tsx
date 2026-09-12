@@ -24,8 +24,8 @@ export default function OfficialsPage() {
   if (currentUser?.role !== 'admin') {
     return (
       <div className="text-center py-20">
-        <Shield className="w-12 h-12 mx-auto text-text-muted mb-4" />
-        <h2 className="text-xl font-bold mb-2">Admin Access Required</h2>
+        <Shield className="w-12 h-12 mx-auto text-primary mb-4" />
+        <h2 className="text-xl font-bold mb-2 text-text-primary">Admin Access Required</h2>
         <p className="text-text-muted text-sm">Only administrators can manage official accounts.</p>
       </div>
     );
@@ -34,7 +34,7 @@ export default function OfficialsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold flex items-center gap-2">
+        <h1 className="text-2xl font-bold flex items-center gap-2 text-text-primary">
           <Users className="w-6 h-6 text-primary" /> Officials
         </h1>
         <p className="text-sm text-text-muted mt-1">Manage government official accounts.</p>
@@ -50,7 +50,7 @@ export default function OfficialsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="glass-card p-5"
+              className="glass-card p-5 hover:border-primary/20 transition-colors"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
@@ -58,7 +58,7 @@ export default function OfficialsPage() {
                     {official.name[0]}
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">{official.name}</p>
+                    <p className="font-semibold text-sm text-text-primary">{official.name}</p>
                     <p className="text-xs text-text-muted">{official.email}</p>
                   </div>
                 </div>
@@ -72,19 +72,19 @@ export default function OfficialsPage() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-text-muted">Role</span>
-                  <span className="capitalize font-medium">{official.role}</span>
+                  <span className="capitalize font-medium text-text-primary">{official.role}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-text-muted">Ward</span>
-                  <span>{official.ward || 'N/A'}</span>
+                  <span className="text-text-primary">{official.ward || 'N/A'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-text-muted">Department</span>
-                  <span>{official.department || 'N/A'}</span>
+                  <span className="text-text-primary">{official.department || 'N/A'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-text-muted">Joined</span>
-                  <span>{formatDate(official.createdAt)}</span>
+                  <span className="text-text-primary">{formatDate(official.createdAt)}</span>
                 </div>
               </div>
             </motion.div>

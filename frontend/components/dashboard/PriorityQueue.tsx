@@ -13,9 +13,9 @@ interface PriorityQueueProps {
 
 export default function PriorityQueue({ issues }: PriorityQueueProps) {
   const getRowColor = (issue: Issue) => {
-    if (issue.voteCount > 30 || daysSince(issue.createdAt) > 14) return 'border-l-danger';
-    if (issue.voteCount >= 10) return 'border-l-warning';
-    return 'border-l-success';
+    if (issue.voteCount > 30 || daysSince(issue.createdAt) > 14) return 'border-l-[#F87171]';
+    if (issue.voteCount >= 10) return 'border-l-[#FBBF24]';
+    return 'border-l-[#4ADE80]';
   };
 
   const daysSince = (dateStr: string) =>
@@ -23,15 +23,15 @@ export default function PriorityQueue({ issues }: PriorityQueueProps) {
 
   return (
     <div className="glass-card overflow-hidden">
-      <div className="p-4 border-b border-border">
-        <h3 className="text-lg font-semibold">Priority Queue</h3>
+      <div className="p-4 border-b border-white/[0.06]">
+        <h3 className="text-lg font-semibold text-text-primary">Priority Queue</h3>
         <p className="text-xs text-text-muted mt-1">Sorted by priority score</p>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-border text-left">
+            <tr className="border-b border-white/[0.06] text-left">
               <th className="px-4 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Priority</th>
               <th className="px-4 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Category</th>
               <th className="px-4 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Title</th>
@@ -50,7 +50,7 @@ export default function PriorityQueue({ issues }: PriorityQueueProps) {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.03 }}
-                  className={`border-b border-border/50 hover:bg-surface/50 transition-colors border-l-4 ${getRowColor(issue)}`}
+                  className={`border-b border-white/[0.04] hover:bg-surface-2/20 transition-colors border-l-4 ${getRowColor(issue)}`}
                 >
                   <td className="px-4 py-3">
                     <span className="font-mono text-sm font-bold text-primary">
@@ -66,10 +66,10 @@ export default function PriorityQueue({ issues }: PriorityQueueProps) {
                     </span>
                   </td>
                   <td className="px-4 py-3 max-w-[200px]">
-                    <span className="text-sm truncate block">{issue.title}</span>
+                    <span className="text-sm truncate block text-text-primary">{issue.title}</span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="flex items-center gap-1 text-sm">
+                    <span className="flex items-center gap-1 text-sm text-text-primary">
                       <ArrowBigUp className="w-4 h-4 text-primary" />
                       {issue.voteCount}
                     </span>

@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, X, Image as ImageIcon, Loader2, CheckCircle } from 'lucide-react';
+import { Upload, X, Loader2, CheckCircle } from 'lucide-react';
 import api from '@/lib/api';
 import { Photo } from '@/types';
 import toast from 'react-hot-toast';
@@ -73,35 +73,38 @@ export default function IssueFormPhotoUpload({ photos, onPhotosChange }: IssueFo
       {/* Dropzone */}
       <div
         {...getRootProps()}
-        className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
+        className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300 ${
           isDragActive
-            ? 'border-primary bg-primary/5'
+            ? 'border-primary bg-primary/5 shadow-[inset_0_0_20px_rgba(232,148,58,0.1)]'
             : photos.length >= 5
-            ? 'border-border/30 opacity-50 cursor-not-allowed'
-            : 'border-border hover:border-primary/50'
+            ? 'border-white/[0.03] opacity-50 cursor-not-allowed bg-[#0A0A0A]'
+            : 'border-white/[0.06] hover:border-primary/50 bg-[#0A0A0A] hover:bg-[#141414]'
         }`}
       >
         <input {...getInputProps()} />
         {uploading ? (
-          <div className="space-y-3">
-            <Loader2 className="w-8 h-8 mx-auto text-primary animate-spin" />
-            <div className="w-48 mx-auto bg-border rounded-full h-2 overflow-hidden">
+          <div className="space-y-4">
+            <Loader2 className="w-10 h-10 mx-auto text-primary animate-spin" />
+            <div className="w-56 mx-auto bg-surface-3 rounded-full h-2 overflow-hidden border border-white/[0.03]">
               <motion.div
-                className="h-full bg-primary rounded-full"
+                className="h-full bg-primary rounded-full shadow-[0_0_10px_var(--tw-colors-primary)]"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
+                transition={{ ease: "linear" }}
               />
             </div>
-            <p className="text-sm text-text-muted">Uploading... {progress}%</p>
+            <p className="text-sm text-primary font-medium tracking-wide">Uploading... {progress}%</p>
           </div>
         ) : (
-          <div className="space-y-2">
-            <Upload className="w-8 h-8 mx-auto text-text-muted" />
-            <p className="text-sm text-text-primary font-medium">
+          <div className="space-y-3">
+            <div className="w-16 h-16 mx-auto rounded-full bg-surface-2 border border-white/[0.06] flex items-center justify-center mb-2">
+              <Upload className={`w-8 h-8 ${isDragActive ? 'text-primary' : 'text-text-muted'}`} />
+            </div>
+            <p className="text-sm text-text-primary font-medium tracking-wide">
               {isDragActive ? 'Drop photos here' : 'Drag & drop photos or click to browse'}
             </p>
-            <p className="text-xs text-text-muted">
-              1–5 photos, 5KB–5MB each • JPEG, PNG, WebP, AVIF, GIF
+            <p className="text-xs text-text-muted font-mono bg-surface-2 inline-block px-3 py-1 rounded-full border border-white/[0.03]">
+              1–5 photos • 5KB–5MB • JPEG/PNG/WEBP
             </p>
           </div>
         )}
@@ -110,29 +113,35 @@ export default function IssueFormPhotoUpload({ photos, onPhotosChange }: IssueFo
       {/* Preview */}
       <AnimatePresence>
         {photos.length > 0 && (
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {photos.map((photo, index) => (
               <motion.div
                 key={photo.publicId}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                className="relative rounded-lg overflow-hidden aspect-video group"
+                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: -10 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="relative rounded-xl overflow-hidden aspect-square group border border-white/[0.06] shadow-lg"
               >
                 <img
                   src={photo.thumbnail || photo.url}
                   alt={`Photo ${index + 1}`}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-                <button
-                  type="button"
-                  onClick={() => removePhoto(index)}
-                  className="absolute top-1 right-1 w-6 h-6 bg-danger rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <X className="w-3 h-3 text-white" />
-                </button>
-                <div className="absolute bottom-1 left-1">
-                  <CheckCircle className="w-4 h-4 text-success" />
+                
+                {/* Hover Overlay */}
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm">
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); removePhoto(index); }}
+                    className="w-10 h-10 bg-danger/90 rounded-full flex items-center justify-center hover:bg-danger hover:scale-110 transition-all shadow-[0_0_15px_rgba(248,113,113,0.5)]"
+                  >
+                    <X className="w-5 h-5 text-white" />
+                  </button>
+                </div>
+
+                <div className="absolute bottom-2 left-2 bg-black/50 backdrop-blur-md rounded-full p-1 border border-white/[0.1]">
+                  <CheckCircle className="w-4 h-4 text-primary" />
                 </div>
               </motion.div>
             ))}

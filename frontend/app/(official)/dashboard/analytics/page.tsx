@@ -11,13 +11,13 @@ import api from '@/lib/api';
 import { CATEGORY_CONFIG, STATUS_CONFIG } from '@/types';
 import StatsGrid from '@/components/dashboard/StatsGrid';
 
-const CHART_COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#F97316', '#6B7280'];
+const CHART_COLORS = ['#E8943A', '#4ADE80', '#FBBF24', '#F87171', '#F0A850', '#D47830', '#60A5FA', '#F97316', '#8A8580'];
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="glass-card px-3 py-2 text-sm">
-      <p className="font-medium">{label}</p>
+    <div className="glass-card px-3 py-2 text-sm bg-surface/90 border border-white/[0.06]">
+      <p className="font-medium text-text-primary">{label}</p>
       {payload.map((entry: any, i: number) => (
         <p key={i} style={{ color: entry.color }}>{entry.name}: {entry.value}</p>
       ))}
@@ -45,38 +45,38 @@ export default function AnalyticsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold flex items-center gap-2"><BarChart3 className="w-6 h-6 text-primary" /> Analytics</h1>
+        <h1 className="text-2xl font-bold flex items-center gap-2 text-text-primary"><BarChart3 className="w-6 h-6 text-primary" /> Analytics</h1>
         <p className="text-sm text-text-muted mt-1">Data-driven insights for better governance.</p>
       </div>
 
       {/* KPIs */}
       {overview && (
         <StatsGrid stats={[
-          { label: 'Resolution Rate', value: resolutionRate, icon: <TrendingUp className="w-5 h-5" />, color: '#10B981', suffix: '%' },
-          { label: 'Avg Response', value: overview.avgResolutionTime, icon: <Clock className="w-5 h-5" />, color: '#F59E0B', suffix: ' days' },
-          { label: 'Total Issues', value: overview.totalIssues, icon: <BarChart3 className="w-5 h-5" />, color: '#3B82F6' },
-          { label: 'Pending', value: overview.pending, icon: <PieChartIcon className="w-5 h-5" />, color: '#EF4444' },
+          { label: 'Resolution Rate', value: resolutionRate, icon: <TrendingUp className="w-5 h-5" />, color: '#4ADE80', suffix: '%' },
+          { label: 'Avg Response', value: overview.avgResolutionTime, icon: <Clock className="w-5 h-5" />, color: '#FBBF24', suffix: ' days' },
+          { label: 'Total Issues', value: overview.totalIssues, icon: <BarChart3 className="w-5 h-5" />, color: '#E8943A' },
+          { label: 'Pending', value: overview.pending, icon: <PieChartIcon className="w-5 h-5" />, color: '#F87171' },
         ]} />
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Trend Line */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-5">
-          <h3 className="text-lg font-semibold mb-4">Issues Reported (30 Days)</h3>
+          <h3 className="text-lg font-semibold mb-4 text-text-primary">Issues Reported (30 Days)</h3>
           <ResponsiveContainer width="100%" height={280}>
             <LineChart data={trends}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" />
-              <XAxis dataKey="date" tick={{ fill: '#9CA3AF', fontSize: 10 }} tickFormatter={(d) => d.slice(5)} />
-              <YAxis tick={{ fill: '#9CA3AF', fontSize: 10 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#1C1C1C" />
+              <XAxis dataKey="date" tick={{ fill: '#8A8580', fontSize: 10 }} tickFormatter={(d) => d.slice(5)} />
+              <YAxis tick={{ fill: '#8A8580', fontSize: 10 }} />
               <Tooltip content={<CustomTooltip />} />
-              <Line type="monotone" dataKey="count" stroke="#3B82F6" strokeWidth={2} dot={{ fill: '#3B82F6', r: 3 }} />
+              <Line type="monotone" dataKey="count" stroke="#E8943A" strokeWidth={2} dot={{ fill: '#E8943A', r: 3 }} />
             </LineChart>
           </ResponsiveContainer>
         </motion.div>
 
         {/* Category Pie */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-5">
-          <h3 className="text-lg font-semibold mb-4">Issues by Category</h3>
+          <h3 className="text-lg font-semibold mb-4 text-text-primary">Issues by Category</h3>
           <ResponsiveContainer width="100%" height={280}>
             <PieChart>
               <Pie
@@ -103,15 +103,15 @@ export default function AnalyticsPage() {
 
         {/* Resolution Time Bar */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-5">
-          <h3 className="text-lg font-semibold mb-4">Avg Resolution Time by Category</h3>
+          <h3 className="text-lg font-semibold mb-4 text-text-primary">Avg Resolution Time by Category</h3>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={resTime.map((d) => ({
               ...d,
               name: CATEGORY_CONFIG[d.category as keyof typeof CATEGORY_CONFIG]?.label || d.category,
             }))}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" />
-              <XAxis dataKey="name" tick={{ fill: '#9CA3AF', fontSize: 10 }} angle={-30} textAnchor="end" height={60} />
-              <YAxis tick={{ fill: '#9CA3AF', fontSize: 10 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#1C1C1C" />
+              <XAxis dataKey="name" tick={{ fill: '#8A8580', fontSize: 10 }} angle={-30} textAnchor="end" height={60} />
+              <YAxis tick={{ fill: '#8A8580', fontSize: 10 }} />
               <Tooltip content={<CustomTooltip />} />
               <Bar dataKey="avgDays" name="Avg Days" radius={[4, 4, 0, 0]}>
                 {resTime.map((_, i) => (
@@ -124,20 +124,20 @@ export default function AnalyticsPage() {
 
         {/* Status Breakdown */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card p-5">
-          <h3 className="text-lg font-semibold mb-4">Status Distribution</h3>
+          <h3 className="text-lg font-semibold mb-4 text-text-primary">Status Distribution</h3>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={byStatus.map((d) => ({
               ...d,
               name: STATUS_CONFIG[d.status as keyof typeof STATUS_CONFIG]?.label || d.status,
-              fill: STATUS_CONFIG[d.status as keyof typeof STATUS_CONFIG]?.color || '#6B7280',
+              fill: STATUS_CONFIG[d.status as keyof typeof STATUS_CONFIG]?.color || '#8A8580',
             }))}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" />
-              <XAxis dataKey="name" tick={{ fill: '#9CA3AF', fontSize: 11 }} />
-              <YAxis tick={{ fill: '#9CA3AF', fontSize: 11 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#1C1C1C" />
+              <XAxis dataKey="name" tick={{ fill: '#8A8580', fontSize: 11 }} />
+              <YAxis tick={{ fill: '#8A8580', fontSize: 11 }} />
               <Tooltip content={<CustomTooltip />} />
               <Bar dataKey="count" name="Issues" radius={[4, 4, 0, 0]}>
                 {byStatus.map((d, i) => (
-                  <Cell key={i} fill={STATUS_CONFIG[d.status as keyof typeof STATUS_CONFIG]?.color || '#6B7280'} />
+                  <Cell key={i} fill={STATUS_CONFIG[d.status as keyof typeof STATUS_CONFIG]?.color || '#8A8580'} />
                 ))}
               </Bar>
             </BarChart>

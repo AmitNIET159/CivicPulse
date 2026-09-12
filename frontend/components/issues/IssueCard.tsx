@@ -8,6 +8,7 @@ import StatusBadge from './StatusBadge';
 import VoteButton from './VoteButton';
 import { timeAgo, truncate } from '@/lib/utils';
 import { useAuthStore } from '@/lib/store';
+import DepthCard from '@/components/ui/DepthCard';
 
 interface IssueCardProps {
   issue: Issue;
@@ -26,22 +27,23 @@ export default function IssueCard({ issue, index = 0 }: IssueCardProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
+      className="h-full"
     >
       <Link href={`/issues/${issue._id}`}>
-        <div className="glass-card glass-card-hover overflow-hidden transition-all duration-300 group cursor-pointer h-full flex flex-col">
+        <DepthCard depth="shallow" className="overflow-hidden group cursor-pointer h-full flex flex-col p-0">
           {/* Photo */}
           {issue.photos && issue.photos.length > 0 ? (
-            <div className="relative h-44 overflow-hidden">
+            <div className="relative h-44 overflow-hidden rounded-t-2xl">
               <img
                 src={issue.photos[0].thumbnail || issue.photos[0].url}
                 alt={issue.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
               <div className="absolute top-3 left-3">
                 <span
-                  className="px-2 py-1 rounded-lg text-xs font-semibold"
-                  style={{ backgroundColor: categoryConfig.color + '22', color: categoryConfig.color }}
+                  className="px-2 py-1 rounded-lg text-xs font-semibold backdrop-blur-md"
+                  style={{ backgroundColor: categoryConfig.color + '33', color: categoryConfig.color, border: `1px solid ${categoryConfig.color}40` }}
                 >
                   {categoryConfig.icon} {categoryConfig.label}
                 </span>
@@ -51,12 +53,12 @@ export default function IssueCard({ issue, index = 0 }: IssueCardProps) {
               </div>
             </div>
           ) : (
-            <div className="relative h-32 bg-gradient-to-br from-surface to-background flex items-center justify-center">
-              <span className="text-4xl">{categoryConfig.icon}</span>
+            <div className="relative h-32 bg-[linear-gradient(135deg,#2A2A2A,#1A1A1A,#2A2A2A)] rounded-t-2xl flex items-center justify-center border-b border-white/[0.06]">
+              <span className="text-4xl filter drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">{categoryConfig.icon}</span>
               <div className="absolute top-3 left-3">
                 <span
-                  className="px-2 py-1 rounded-lg text-xs font-semibold"
-                  style={{ backgroundColor: categoryConfig.color + '22', color: categoryConfig.color }}
+                  className="px-2 py-1 rounded-lg text-xs font-semibold backdrop-blur-md"
+                  style={{ backgroundColor: categoryConfig.color + '33', color: categoryConfig.color, border: `1px solid ${categoryConfig.color}40` }}
                 >
                   {categoryConfig.label}
                 </span>
@@ -68,21 +70,20 @@ export default function IssueCard({ issue, index = 0 }: IssueCardProps) {
           )}
 
           {/* Content */}
-          <div className="p-4 flex-1 flex flex-col">
-            <h3 className="text-sm font-semibold text-text-primary mb-1 line-clamp-2 group-hover:text-primary transition-colors">
+          <div className="p-4 flex-1 flex flex-col bg-[#141414] rounded-b-2xl">
+            <h3 className="text-sm font-semibold text-text-primary mb-2 line-clamp-2 group-hover:text-primary transition-colors duration-300">
               {issue.title}
             </h3>
 
-            <div className="flex items-center gap-1.5 text-text-muted text-xs mb-3">
-              <MapPin className="w-3 h-3 flex-shrink-0" />
-              <span className="truncate">{truncate(issue.address || 'Location not specified', 40)}</span>
+            <div className="flex items-center gap-1.5 text-text-muted text-xs mb-4">
+              <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-primary" />
+              <span className="truncate tracking-wide">{truncate(issue.address || 'Location not specified', 40)}</span>
             </div>
 
-            <div className="mt-auto flex items-center justify-between">
-              <div className="flex items-center gap-2 text-xs text-text-muted">
-                <Clock className="w-3 h-3" />
-                <span>{timeAgo(issue.createdAt)}</span>
-                {reporter && <span>by {reporter.name}</span>}
+            <div className="mt-auto flex items-center justify-between border-t border-white/[0.06] pt-3">
+              <div className="flex items-center gap-2 text-xs text-text-muted font-medium">
+                <Clock className="w-3.5 h-3.5" />
+                <span className="tracking-wide">{timeAgo(issue.createdAt)}</span>
               </div>
 
               <VoteButton
@@ -93,7 +94,7 @@ export default function IssueCard({ issue, index = 0 }: IssueCardProps) {
               />
             </div>
           </div>
-        </div>
+        </DepthCard>
       </Link>
     </motion.div>
   );

@@ -41,7 +41,7 @@ export default function OfficialIssuesPage() {
       <div className="flex items-center gap-3">
         <FileText className="w-6 h-6 text-primary" />
         <div>
-          <h1 className="text-2xl font-bold">All Issues</h1>
+          <h1 className="text-2xl font-bold text-text-primary">All Issues</h1>
           <p className="text-sm text-text-muted">{total} issues total</p>
         </div>
       </div>
@@ -57,13 +57,13 @@ export default function OfficialIssuesPage() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-border text-left">
-                <th className="px-4 py-3 text-xs font-medium text-text-muted uppercase">Title</th>
-                <th className="px-4 py-3 text-xs font-medium text-text-muted uppercase">Category</th>
-                <th className="px-4 py-3 text-xs font-medium text-text-muted uppercase">Status</th>
-                <th className="px-4 py-3 text-xs font-medium text-text-muted uppercase">Votes</th>
-                <th className="px-4 py-3 text-xs font-medium text-text-muted uppercase">Reported</th>
-                <th className="px-4 py-3 text-xs font-medium text-text-muted uppercase">Actions</th>
+              <tr className="border-b border-white/[0.06] text-left">
+                <th className="px-4 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Title</th>
+                <th className="px-4 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Category</th>
+                <th className="px-4 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Status</th>
+                <th className="px-4 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Votes</th>
+                <th className="px-4 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Reported</th>
+                <th className="px-4 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -75,10 +75,10 @@ export default function OfficialIssuesPage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.02 }}
-                    className="border-b border-border/50 hover:bg-surface/50 transition-colors"
+                    className="border-b border-white/[0.04] hover:bg-surface-2/30 transition-colors"
                   >
                     <td className="px-4 py-3 max-w-[250px]">
-                      <span className="text-sm truncate block">{issue.title}</span>
+                      <span className="text-sm truncate block text-text-primary">{issue.title}</span>
                       <span className="text-xs text-text-muted">{issue.ward}</span>
                     </td>
                     <td className="px-4 py-3">
@@ -86,7 +86,7 @@ export default function OfficialIssuesPage() {
                     </td>
                     <td className="px-4 py-3"><StatusBadge status={issue.status} /></td>
                     <td className="px-4 py-3">
-                      <span className="flex items-center gap-1 text-sm">
+                      <span className="flex items-center gap-1 text-sm text-text-primary">
                         <ArrowBigUp className="w-4 h-4 text-primary" />{issue.voteCount}
                       </span>
                     </td>

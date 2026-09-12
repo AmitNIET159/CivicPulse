@@ -53,21 +53,21 @@ export default function StatsGrid({ stats }: StatsGridProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 }}
-          className="glass-card p-5 group hover:border-opacity-50 transition-all"
-          style={{ borderColor: stat.color + '30' }}
+          className="glass-card p-5 group hover:border-opacity-50 transition-all bg-[linear-gradient(135deg,rgba(42,42,42,0.5),rgba(26,26,26,0.5),rgba(42,42,42,0.5))]"
+          style={{ borderColor: stat.color + '40' }}
         >
           <div className="flex items-start justify-between">
             <div>
               <p className="text-xs text-text-muted font-medium uppercase tracking-wider mb-1">
                 {stat.label}
               </p>
-              <p className="text-3xl font-bold" style={{ color: stat.color }}>
+              <p className="text-3xl font-bold font-mono tabular-nums text-text-primary">
                 <AnimatedCounter value={stat.value} suffix={stat.suffix} />
               </p>
             </div>
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ backgroundColor: stat.color + '15' }}
+              style={{ backgroundColor: stat.color + '20' }}
             >
               <div style={{ color: stat.color }}>{stat.icon}</div>
             </div>

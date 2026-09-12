@@ -44,13 +44,13 @@ export default function StatusUpdater({ issueId, currentStatus, onStatusUpdate }
 
   return (
     <div className="glass-card p-5 space-y-4">
-      <h3 className="text-lg font-semibold">Update Status</h3>
+      <h3 className="text-lg font-semibold text-text-primary">Update Status</h3>
 
       <div className="grid grid-cols-1 gap-3">
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value as IssueStatus)}
-          className="bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary/50"
+          className="bg-[#0A0A0A] border border-white/[0.06] rounded-lg px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:border-primary/50"
         >
           {Object.entries(STATUS_CONFIG).map(([key, config]) => (
             <option key={key} value={key}>{config.label}</option>
@@ -61,7 +61,7 @@ export default function StatusUpdater({ issueId, currentStatus, onStatusUpdate }
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           placeholder="Add a comment about this status change..."
-          className="bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary/50 min-h-[80px] resize-none"
+          className="bg-[#0A0A0A] border border-white/[0.06] rounded-lg px-3 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary/50 min-h-[80px] resize-none"
         />
 
         {status === 'rejected' && (
@@ -69,7 +69,7 @@ export default function StatusUpdater({ issueId, currentStatus, onStatusUpdate }
             value={rejectionReason}
             onChange={(e) => setRejectionReason(e.target.value)}
             placeholder="Reason for rejection..."
-            className="bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary/50 min-h-[60px] resize-none border-danger/30"
+            className="bg-[#0A0A0A] border border-[#F87171]/30 rounded-lg px-3 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-danger/50 min-h-[60px] resize-none"
           />
         )}
 

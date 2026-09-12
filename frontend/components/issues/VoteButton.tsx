@@ -69,23 +69,29 @@ export default function VoteButton({
   return (
     <motion.button
       onClick={handleVote}
-      whileTap={{ scale: 0.9 }}
-      className={`flex flex-col items-center gap-0.5 rounded-xl transition-all duration-200 ${
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className={`flex flex-col items-center gap-0.5 rounded-xl transition-all duration-300 relative overflow-hidden ${
         isLarge ? 'px-6 py-3' : 'px-3 py-2'
       } ${
         isVoted
-          ? 'bg-primary/20 border-primary/40 text-primary'
-          : 'bg-surface border-border text-text-muted hover:text-primary hover:border-primary/30'
+          ? 'bg-primary/20 border-primary/50 text-primary shadow-[inset_0_0_15px_rgba(232,148,58,0.1)]'
+          : 'bg-[#141414] border-white/[0.06] text-text-muted hover:text-primary hover:border-primary/40 hover:bg-[#1A1A1A]'
       } border`}
+      style={{ transformStyle: 'preserve-3d' }}
       disabled={isLoading}
     >
+      {isVoted && (
+        <div className="absolute inset-0 bg-primary/5 pointer-events-none" />
+      )}
       <motion.div
-        animate={isVoted ? { scale: [1, 1.3, 1], y: [0, -3, 0] } : {}}
+        animate={isVoted ? { scale: [1, 1.2, 1], y: [0, -3, 0] } : {}}
         transition={{ duration: 0.3 }}
+        className="relative z-10"
       >
         <ArrowBigUp
-          className={`${isLarge ? 'w-7 h-7' : 'w-5 h-5'} ${
-            isVoted ? 'fill-primary' : ''
+          className={`${isLarge ? 'w-7 h-7' : 'w-5 h-5'} transition-colors duration-300 ${
+            isVoted ? 'fill-primary text-primary filter drop-shadow-[0_0_8px_rgba(232,148,58,0.5)]' : 'text-text-muted'
           }`}
         />
       </motion.div>
@@ -95,7 +101,7 @@ export default function VoteButton({
           initial={{ y: 5, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -5, opacity: 0 }}
-          className={`font-bold ${isLarge ? 'text-lg' : 'text-sm'}`}
+          className={`font-bold font-mono tracking-tighter relative z-10 ${isLarge ? 'text-lg' : 'text-sm'}`}
         >
           {voteCount}
         </motion.span>

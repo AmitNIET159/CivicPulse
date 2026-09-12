@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-import { MapPin, Calendar, User, Share2, ArrowLeft, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
+import { MapPin, Calendar, User, Share2, ArrowLeft, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Issue, CATEGORY_CONFIG, STATUS_CONFIG, IssueCategory, IssueStatus } from '@/types';
 import api from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
@@ -13,6 +13,7 @@ import VoteButton from '@/components/issues/VoteButton';
 import { formatDate, timeAgo } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+import DepthCard from '@/components/ui/DepthCard';
 
 const IssueMap = dynamic(() => import('@/components/map/IssueMap'), { ssr: false });
 
@@ -66,7 +67,7 @@ export default function IssueDetailPage() {
     <div className="max-w-5xl mx-auto px-6 py-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         {/* Back */}
-        <Link href="/issues" className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-text-primary mb-6 transition-colors">
+        <Link href="/issues" className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-primary mb-6 transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Issues
         </Link>
 
@@ -75,22 +76,23 @@ export default function IssueDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Photo Gallery */}
             {issue.photos && issue.photos.length > 0 && (
-              <div className="glass-card overflow-hidden">
+              <DepthCard depth="shallow" className="overflow-hidden">
                 <div className="relative aspect-video">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10 pointer-events-none" />
                   <img
                     src={issue.photos[currentPhoto]?.url}
                     alt={issue.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-opacity duration-500"
                   />
                 </div>
                 {issue.photos.length > 1 && (
-                  <div className="flex gap-2 p-3 overflow-x-auto">
+                  <div className="flex gap-2 p-3 overflow-x-auto bg-surface-2 border-t border-white/[0.06]">
                     {issue.photos.map((photo, i) => (
                       <button
                         key={i}
                         onClick={() => setCurrentPhoto(i)}
-                        className={`flex-shrink-0 w-16 h-12 rounded-lg overflow-hidden border-2 transition-colors ${
-                          i === currentPhoto ? 'border-primary' : 'border-transparent opacity-60 hover:opacity-100'
+                        className={`flex-shrink-0 w-16 h-12 rounded-lg overflow-hidden border-2 transition-all ${
+                          i === currentPhoto ? 'border-primary scale-105' : 'border-transparent opacity-60 hover:opacity-100'
                         }`}
                       >
                         <img src={photo.thumbnail || photo.url} alt="" className="w-full h-full object-cover" />
@@ -98,11 +100,11 @@ export default function IssueDetailPage() {
                     ))}
                   </div>
                 )}
-              </div>
+              </DepthCard>
             )}
 
             {/* Issue Info */}
-            <div className="glass-card p-6">
+            <DepthCard depth="shallow" className="p-6">
               <div className="flex items-start justify-between gap-4 mb-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
@@ -114,7 +116,7 @@ export default function IssueDetailPage() {
                     </span>
                     <StatusBadge status={issue.status} size="md" />
                   </div>
-                  <h1 className="text-2xl font-bold mb-2">{issue.title}</h1>
+                  <h1 className="text-2xl font-bold mb-2 text-text-primary tracking-tight">{issue.title}</h1>
                 </div>
                 <VoteButton issueId={issue._id} initialVoteCount={issue.voteCount} initialIsVoted={isVoted} size="lg" />
               </div>
@@ -123,25 +125,25 @@ export default function IssueDetailPage() {
 
               <div className="flex flex-wrap gap-4 text-sm text-text-muted">
                 <div className="flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4" />
+                  <MapPin className="w-4 h-4 text-primary" />
                   {issue.address || 'No address'}
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4" />
+                  <Calendar className="w-4 h-4 text-primary" />
                   {formatDate(issue.createdAt)}
                 </div>
                 {reporter && (
                   <div className="flex items-center gap-1.5">
-                    <User className="w-4 h-4" />
+                    <User className="w-4 h-4 text-primary" />
                     {reporter.name}
                   </div>
                 )}
               </div>
-            </div>
+            </DepthCard>
 
             {/* Status Timeline */}
-            <div className="glass-card p-6">
-              <h3 className="text-lg font-semibold mb-4">Status Timeline</h3>
+            <DepthCard depth="shallow" className="p-6">
+              <h3 className="text-lg font-semibold mb-4 text-text-primary">Status Timeline</h3>
               <div className="flex items-center gap-2">
                 {statusSteps.map((step, i) => {
                   const isCompleted = i <= currentStepIndex && issue.status !== 'rejected';
@@ -149,58 +151,59 @@ export default function IssueDetailPage() {
                   const stepConfig = STATUS_CONFIG[step];
                   return (
                     <div key={step} className="flex items-center flex-1">
-                      <div className="flex flex-col items-center flex-1">
+                      <div className="flex flex-col items-center flex-1 relative z-10">
                         <div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                          className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all shadow-lg ${
                             isCompleted
-                              ? 'bg-primary text-white'
-                              : 'bg-surface border border-border text-text-muted'
+                              ? 'bg-primary text-background border border-primary/20'
+                              : 'bg-surface-2 border border-white/[0.06] text-text-muted'
                           }`}
                         >
                           {isCompleted ? <CheckCircle className="w-4 h-4" /> : i + 1}
                         </div>
-                        <span className={`text-xs mt-1 ${isCurrent ? 'text-primary font-medium' : 'text-text-muted'}`}>
+                        <span className={`text-xs mt-2 ${isCurrent ? 'text-primary font-medium' : 'text-text-muted'}`}>
                           {stepConfig.label}
                         </span>
                       </div>
                       {i < statusSteps.length - 1 && (
-                        <div className={`h-0.5 flex-1 ${isCompleted && i < currentStepIndex ? 'bg-primary' : 'bg-border'}`} />
+                        <div className={`h-0.5 flex-1 -ml-4 -mr-4 rounded-full ${isCompleted && i < currentStepIndex ? 'bg-[linear-gradient(90deg,var(--tw-colors-primary),#E8943A)]' : 'bg-surface-3'}`} />
                       )}
                     </div>
                   );
                 })}
               </div>
               {issue.status === 'rejected' && (
-                <div className="mt-4 p-3 bg-danger/10 border border-danger/20 rounded-lg text-sm text-danger flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <div className="mt-6 p-4 bg-danger/10 border border-danger/20 rounded-lg text-sm text-danger flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium">Issue Rejected</p>
                     {issue.rejectionReason && <p className="text-danger/80 mt-1">{issue.rejectionReason}</p>}
                   </div>
                 </div>
               )}
-            </div>
+            </DepthCard>
 
             {/* Official Response */}
             {issue.officialComment && (
-              <div className="glass-card p-6">
-                <h3 className="text-lg font-semibold mb-3">Official Response</h3>
-                <p className="text-text-muted text-sm">{issue.officialComment}</p>
+              <DepthCard depth="shallow" className="p-6 border-l-4 border-l-primary relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
+                <h3 className="text-lg font-semibold mb-3 text-text-primary">Official Response</h3>
+                <p className="text-text-muted text-sm leading-relaxed">{issue.officialComment}</p>
                 {assignee && (
-                  <p className="text-xs text-text-muted mt-3">— {assignee.name}, {assignee.department}</p>
+                  <p className="text-xs font-medium text-text-muted mt-4">— {assignee.name}, {assignee.department}</p>
                 )}
-              </div>
+              </DepthCard>
             )}
           </div>
 
           {/* Sidebar */}
           <div className="space-y-4">
             {/* Map */}
-            <div className="glass-card overflow-hidden">
-              <div className="p-3 border-b border-border">
-                <h4 className="text-sm font-semibold">Location</h4>
+            <DepthCard depth="shallow" className="overflow-hidden" noPerspective={true}>
+              <div className="p-3 border-b border-white/[0.06] bg-surface-2">
+                <h4 className="text-sm font-semibold text-text-primary">Location</h4>
               </div>
-              <div className="h-48">
+              <div className="h-48 relative">
                 <IssueMap
                   issues={[issue]}
                   center={[issue.location.coordinates[1], issue.location.coordinates[0]]}
@@ -210,43 +213,43 @@ export default function IssueDetailPage() {
                   interactive={false}
                 />
               </div>
-              <div className="p-3">
-                <p className="text-xs text-text-muted font-mono">
+              <div className="p-3 bg-surface-2">
+                <p className="text-xs text-text-muted font-mono tracking-wider">
                   {issue.location.coordinates[1].toFixed(6)}, {issue.location.coordinates[0].toFixed(6)}
                 </p>
               </div>
-            </div>
+            </DepthCard>
 
             {/* Share */}
             <button
               onClick={handleShare}
-              className="w-full glass-card p-3 flex items-center justify-center gap-2 text-sm font-medium hover:border-primary/30 transition-colors"
+              className="w-full glass-card p-3 flex items-center justify-center gap-2 text-sm font-medium hover:border-primary/50 hover:text-primary transition-colors"
             >
               <Share2 className="w-4 h-4" />
               Share Issue
             </button>
 
             {/* Meta info */}
-            <div className="glass-card p-4 space-y-3 text-sm">
-              <div className="flex justify-between">
+            <DepthCard depth="shallow" className="p-4 space-y-3 text-sm">
+              <div className="flex justify-between items-center">
                 <span className="text-text-muted">Ward</span>
-                <span className="font-medium">{issue.ward || 'N/A'}</span>
+                <span className="font-mono text-text-primary bg-surface-3 px-2 py-0.5 rounded">{issue.ward || 'N/A'}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <span className="text-text-muted">Priority Score</span>
-                <span className="font-mono text-primary font-bold">{Math.round(issue.priority)}</span>
+                <span className="font-mono text-primary font-bold text-base">{Math.round(issue.priority)}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <span className="text-text-muted">Reported</span>
-                <span>{timeAgo(issue.createdAt)}</span>
+                <span className="font-mono text-text-primary">{timeAgo(issue.createdAt)}</span>
               </div>
               {issue.resolvedAt && (
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span className="text-text-muted">Resolved</span>
-                  <span className="text-success">{formatDate(issue.resolvedAt)}</span>
+                  <span className="font-mono text-success bg-success/10 px-2 py-0.5 rounded">{formatDate(issue.resolvedAt)}</span>
                 </div>
               )}
-            </div>
+            </DepthCard>
           </div>
         </div>
       </motion.div>

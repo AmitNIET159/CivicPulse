@@ -39,7 +39,7 @@ export default function OfficialIssueDetailPage() {
   }
 
   if (!issue) {
-    return <div className="text-center py-20"><h2 className="text-xl font-bold">Issue not found</h2></div>;
+    return <div className="text-center py-20"><h2 className="text-xl font-bold text-text-primary">Issue not found</h2></div>;
   }
 
   const catConfig = CATEGORY_CONFIG[issue.category as IssueCategory];
@@ -60,7 +60,7 @@ export default function OfficialIssueDetailPage() {
             </span>
             <StatusBadge status={issue.status} size="md" />
           </div>
-          <h1 className="text-2xl font-bold">{issue.title}</h1>
+          <h1 className="text-2xl font-bold text-text-primary">{issue.title}</h1>
           <div className="flex items-center gap-4 mt-2 text-sm text-text-muted">
             <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{formatDate(issue.createdAt)}</span>
             <span className="flex items-center gap-1"><ArrowBigUp className="w-3 h-3 text-primary" />{issue.voteCount} votes</span>
@@ -73,7 +73,7 @@ export default function OfficialIssueDetailPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Photos */}
           {issue.photos.length > 0 && (
-            <div className="glass-card overflow-hidden">
+            <div className="glass-card overflow-hidden rounded-xl">
               <div className="grid grid-cols-3 gap-1">
                 {issue.photos.map((photo, i) => (
                   <img key={i} src={photo.url} alt="" className="w-full aspect-video object-cover" />
@@ -85,13 +85,13 @@ export default function OfficialIssueDetailPage() {
           {/* Description */}
           <div className="glass-card p-5">
             <h3 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-2">Description</h3>
-            <p className="text-sm leading-relaxed">{issue.description}</p>
+            <p className="text-sm leading-relaxed text-text-primary">{issue.description}</p>
           </div>
 
           {/* Location */}
           <div className="glass-card overflow-hidden">
-            <div className="p-4 border-b border-border">
-              <h3 className="text-sm font-semibold flex items-center gap-1.5">
+            <div className="p-4 border-b border-white/[0.06]">
+              <h3 className="text-sm font-semibold flex items-center gap-1.5 text-text-primary">
                 <MapPin className="w-4 h-4 text-primary" />
                 Location
               </h3>
@@ -114,6 +114,7 @@ export default function OfficialIssueDetailPage() {
             <div className="space-y-3">
               {issue.statusHistory.map((entry, i) => {
                 const changedByName = typeof entry.changedBy === 'object' ? entry.changedBy.name : 'System';
+                // Using amber for timeline dots
                 return (
                   <motion.div
                     key={i}
@@ -122,9 +123,9 @@ export default function OfficialIssueDetailPage() {
                     transition={{ delay: i * 0.05 }}
                     className="flex items-start gap-3 text-sm"
                   >
-                    <div className="w-2 h-2 mt-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: STATUS_CONFIG[entry.status as IssueStatus]?.color || '#6B7280' }} />
+                    <div className="w-2 h-2 mt-1.5 rounded-full flex-shrink-0 bg-primary" />
                     <div>
-                      <p>
+                      <p className="text-text-primary">
                         <span className="font-medium">{changedByName}</span>
                         {' changed status to '}
                         <span className="font-medium" style={{ color: STATUS_CONFIG[entry.status as IssueStatus]?.color }}>
@@ -149,8 +150,8 @@ export default function OfficialIssueDetailPage() {
           {/* Meta */}
           <div className="glass-card p-4 space-y-3 text-sm">
             <div className="flex justify-between"><span className="text-text-muted">Priority Score</span><span className="font-mono text-primary font-bold">{Math.round(issue.priority)}</span></div>
-            <div className="flex justify-between"><span className="text-text-muted">Ward</span><span>{issue.ward || 'N/A'}</span></div>
-            <div className="flex justify-between"><span className="text-text-muted">Reported</span><span>{timeAgo(issue.createdAt)}</span></div>
+            <div className="flex justify-between"><span className="text-text-muted">Ward</span><span className="text-text-primary">{issue.ward || 'N/A'}</span></div>
+            <div className="flex justify-between"><span className="text-text-muted">Reported</span><span className="text-text-primary">{timeAgo(issue.createdAt)}</span></div>
             {issue.resolvedAt && <div className="flex justify-between"><span className="text-text-muted">Resolved</span><span className="text-success">{formatDate(issue.resolvedAt)}</span></div>}
           </div>
         </div>
