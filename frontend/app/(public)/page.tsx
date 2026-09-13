@@ -60,13 +60,13 @@ export default function HomePage() {
           <motion.div 
             animate={{ rotateZ: 360, rotateX: [60, 65, 60], rotateY: [0, 5, 0] }}
             transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-            className="w-[800px] h-[800px] border-[1px] border-primary/20 rounded-full flex items-center justify-center"
+            className="w-[350px] h-[350px] md:w-[800px] md:h-[800px] border-[1px] border-primary/20 rounded-full flex items-center justify-center"
             style={{ transformStyle: 'preserve-3d' }}
           >
-            <div className="w-[600px] h-[600px] border-[1px] border-primary/40 rounded-full border-dashed" />
-            <div className="absolute w-[400px] h-[400px] border-[2px] border-primary/10 rounded-full" />
-            <div className="absolute w-[900px] h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
-            <div className="absolute h-[900px] w-[1px] bg-gradient-to-b from-transparent via-primary/50 to-transparent" />
+            <div className="w-[250px] h-[250px] md:w-[600px] md:h-[600px] border-[1px] border-primary/40 rounded-full border-dashed" />
+            <div className="absolute w-[170px] h-[170px] md:w-[400px] md:h-[400px] border-[2px] border-primary/10 rounded-full" />
+            <div className="absolute w-[400px] md:w-[900px] h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+            <div className="absolute h-[400px] md:h-[900px] w-[1px] bg-gradient-to-b from-transparent via-primary/50 to-transparent" />
           </motion.div>
         </div>
 
@@ -78,29 +78,30 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#141414]/80 border border-primary/30 backdrop-blur-md mb-8 shadow-[0_0_30px_rgba(232,148,58,0.15)]"
+            className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-[#141414]/80 border border-primary/30 backdrop-blur-md mb-6 md:mb-8 shadow-[0_0_30px_rgba(232,148,58,0.15)]"
             style={{ transform: "perspective(800px) rotateX(5deg)" }}
           >
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(232,148,58,0.8)]" />
-            <span className="text-xs font-semibold text-primary uppercase tracking-widest">System Online // Grid Active</span>
+            <span className="text-[10px] md:text-xs font-semibold text-primary uppercase tracking-widest">System Online // Grid Active</span>
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-6xl md:text-8xl font-display font-extrabold tracking-tighter mb-6 relative"
+            className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-extrabold tracking-tighter mb-4 md:mb-6 relative leading-tight"
           >
             <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-[#F5F0EB] to-[#8A8580] drop-shadow-lg">
-              Report. 
+              Report.{' '}
             </span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-[#F0A850] to-primary drop-shadow-[0_0_30px_rgba(232,148,58,0.4)] mx-4 relative">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-[#F0A850] to-primary drop-shadow-[0_0_30px_rgba(232,148,58,0.4)] relative">
               Vote.
               {/* Glowing underscore */}
-              <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent blur-[2px]" />
+              <div className="absolute -bottom-1 md:-bottom-2 left-0 right-0 h-0.5 md:h-1 bg-gradient-to-r from-transparent via-primary to-transparent blur-[2px]" />
             </span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#8A8580] via-[#5C5855] to-[#222222]">
-              Resolve.
+            <br className="sm:hidden" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#8A8580] via-[#5C5855] to-[#222222] sm:ml-3">
+              {' '}Resolve.
             </span>
           </motion.h1>
 
@@ -108,7 +109,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg md:text-xl text-text-muted max-w-2xl mx-auto mb-12 leading-relaxed font-light backdrop-blur-sm"
+            className="text-base md:text-xl text-text-muted max-w-2xl mx-auto mb-8 md:mb-12 leading-relaxed font-light px-2"
           >
             Join the decentralized network for civic improvement. Pinpoint anomalies, gather community consensus, and track real-time resolution protocols.
           </motion.p>
@@ -117,17 +118,17 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center gap-6 w-full sm:w-auto"
+            className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 w-full sm:w-auto px-4 sm:px-0"
           >
-            <MagneticButton href="/report" variant="primary" className="w-full sm:w-auto text-base px-10 py-5 rounded-xl shadow-[0_0_40px_rgba(232,148,58,0.25)] border border-primary/50 relative overflow-hidden group">
-              <span className="relative z-10 flex items-center">
+            <MagneticButton href="/report" variant="primary" className="w-full sm:w-auto text-sm md:text-base px-6 md:px-10 py-3.5 md:py-5 rounded-xl shadow-[0_0_40px_rgba(232,148,58,0.25)] border border-primary/50 relative overflow-hidden group">
+              <span className="relative z-10 flex items-center justify-center">
                 Initialize Report
                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
             </MagneticButton>
             
-            <MagneticButton href="/map" variant="secondary" className="w-full sm:w-auto text-base px-10 py-5 rounded-xl bg-surface-2/50 backdrop-blur-md">
+            <MagneticButton href="/map" variant="secondary" className="w-full sm:w-auto text-sm md:text-base px-6 md:px-10 py-3.5 md:py-5 rounded-xl bg-surface-2/50 backdrop-blur-md">
               Access Grid Map
               <MapPin className="w-4 h-4 ml-2 text-primary" />
             </MagneticButton>
