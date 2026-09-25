@@ -40,7 +40,7 @@ router.post(
   login
 );
 
-router.post('/refresh', refreshAccessToken);
+router.post('/refresh', authLimiter, refreshAccessToken);
 router.post('/logout', authenticate, logout);
 router.get('/me', authenticate, getMe);
 

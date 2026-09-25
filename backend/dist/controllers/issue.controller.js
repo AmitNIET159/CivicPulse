@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.toggleVote = exports.deleteIssue = exports.updateIssue = exports.createIssue = exports.getIssueById = exports.getPriorityIssues = exports.getNearbyIssues = exports.getIssues = void 0;
+const express_validator_1 = require("express-validator");
 const Issue_1 = __importDefault(require("../models/Issue"));
 const Vote_1 = __importDefault(require("../models/Vote"));
 const User_1 = __importDefault(require("../models/User"));
@@ -21,8 +22,10 @@ const recalculatePriority = async (issueId) => {
 const getIssues = async (req, res) => {
     try {
         const { page = '1', limit = '12', status, category, ward, sort = 'priority', search, } = req.query;
-        const pageNum = parseInt(page, 10);
-        const limitNum = parseInt(limit, 10);
+        const parsedPage = parseInt(page, 10);
+        const parsedLimit = parseInt(limit, 10);
+        const pageNum = isNaN(parsedPage) || parsedPage < 1 ? 1 : parsedPage;
+        const limitNum = isNaN(parsedLimit) || parsedLimit < 1 ? 20 : Math.min(parsedLimit, 100);
         const skip = (pageNum - 1) * limitNum;
         // Build filter
         const filter = {};
@@ -48,18 +51,25 @@ const getIssues = async (req, res) => {
             sortObj = { voteCount: -1 };
         if (sort === 'updated')
             sortObj = { updatedAt: -1 };
-        const [issues, total] = await Promise.all([
-            Issue_1.default.find(filter)
-                .sort(sortObj)
-                .skip(skip)
-                .limit(limitNum)
-                .populate('reportedBy', 'name avatar')
-                .populate('assignedTo', 'name department')
-                .lean(),
-            Issue_1.default.countDocuments(filter),
-        ]);
+        const issues = await Issue_1.default.find(filter)
+            .sort(sortObj)
+            .skip(skip)
+            .limit(limitNum)
+            .select('-statusHistory -officialComment')
+            .populate('reportedBy', 'name avatar')
+            .populate('assignedTo', 'name department')
+            .lean();
+        const total = await Issue_1.default.countDocuments(filter);
+        const userId = req.user?._id?.toString();
+        const processedIssues = issues.map((issue) => {
+            const hasVoted = userId ? issue.voters?.some((v) => v.toString() === userId) : false;
+            return {
+                ...issue,
+                voters: hasVoted ? [userId] : []
+            };
+        });
         res.json({
-            issues,
+            issues: processedIssues,
             pagination: {
                 page: pageNum,
                 limit: limitNum,
@@ -69,7 +79,8 @@ const getIssues = async (req, res) => {
         });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('getIssues error:', error);
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.getIssues = getIssues;
@@ -107,28 +118,41 @@ const getNearbyIssues = async (req, res) => {
                 },
             },
             { $unwind: { path: '$reportedBy', preserveNullAndEmptyArrays: true } },
+            { $project: { statusHistory: 0, officialComment: 0, voters: 0 } },
         ]);
         res.json({ issues });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('getNearbyIssues error:', error);
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.getNearbyIssues = getNearbyIssues;
 // GET /api/issues/priority — Top issues sorted by priority
 const getPriorityIssues = async (req, res) => {
     try {
-        const limit = parseInt(req.query.limit || '20', 10);
+        const parsedLimit = parseInt(req.query.limit || '20', 10);
+        const limit = isNaN(parsedLimit) || parsedLimit < 1 ? 20 : Math.min(parsedLimit, 100);
         const issues = await Issue_1.default.find({ status: { $nin: ['resolved', 'rejected'] } })
             .sort({ priority: -1 })
             .limit(limit)
+            .select('-statusHistory -officialComment')
             .populate('reportedBy', 'name avatar')
             .populate('assignedTo', 'name department')
             .lean();
-        res.json({ issues });
+        const userId = req.user?._id?.toString();
+        const processedIssues = issues.map((issue) => {
+            const hasVoted = userId ? issue.voters?.some((v) => v.toString() === userId) : false;
+            return {
+                ...issue,
+                voters: hasVoted ? [userId] : []
+            };
+        });
+        res.json({ issues: processedIssues });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('getPriorityIssues error:', error);
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.getPriorityIssues = getPriorityIssues;
@@ -147,24 +171,46 @@ const getIssueById = async (req, res) => {
         res.json({ issue });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Issue controller error:', error);
+        if (error.name === 'CastError') {
+            res.status(400).json({ message: 'Invalid ID format.' });
+            return;
+        }
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.getIssueById = getIssueById;
 // POST /api/issues — Create new issue (auth required)
 const createIssue = async (req, res) => {
     try {
+        // Check express-validator results
+        const errors = (0, express_validator_1.validationResult)(req);
+        if (!errors.isEmpty()) {
+            res.status(400).json({ message: errors.array().map(e => e.msg).join(', '), errors: errors.array() });
+            return;
+        }
         if (!req.user) {
             res.status(401).json({ message: 'Authentication required.' });
             return;
         }
         const { title, description, category, coordinates, address, ward, photos } = req.body;
+        // Auto-generate title from description if not provided
+        const issueTitle = (title && title.trim()) ? title.trim() : description.trim().slice(0, 100);
         if (!coordinates || !coordinates.lng || !coordinates.lat) {
             res.status(400).json({ message: 'Location coordinates are required.' });
             return;
         }
+        // Validate photo count: minimum 1, maximum 5
+        if (!photos || !Array.isArray(photos) || photos.length < 1) {
+            res.status(400).json({ message: 'At least 1 photo is required.' });
+            return;
+        }
+        if (photos.length > 5) {
+            res.status(400).json({ message: 'Maximum 5 photos allowed.' });
+            return;
+        }
         const issue = new Issue_1.default({
-            title,
+            title: issueTitle,
             description,
             category,
             location: {
@@ -196,7 +242,12 @@ const createIssue = async (req, res) => {
         });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Issue controller error:', error);
+        if (error.name === 'CastError') {
+            res.status(400).json({ message: 'Invalid ID format.' });
+            return;
+        }
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.createIssue = createIssue;
@@ -224,7 +275,12 @@ const updateIssue = async (req, res) => {
         res.json({ message: 'Issue updated.', issue: updated });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Issue controller error:', error);
+        if (error.name === 'CastError') {
+            res.status(400).json({ message: 'Invalid ID format.' });
+            return;
+        }
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.updateIssue = updateIssue;
@@ -242,7 +298,12 @@ const deleteIssue = async (req, res) => {
         res.json({ message: 'Issue deleted successfully.' });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Issue controller error:', error);
+        if (error.name === 'CastError') {
+            res.status(400).json({ message: 'Invalid ID format.' });
+            return;
+        }
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.deleteIssue = deleteIssue;
@@ -286,7 +347,12 @@ const toggleVote = async (req, res) => {
         });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Issue controller error:', error);
+        if (error.name === 'CastError') {
+            res.status(400).json({ message: 'Invalid ID format.' });
+            return;
+        }
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.toggleVote = toggleVote;

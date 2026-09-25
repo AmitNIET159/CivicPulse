@@ -43,7 +43,7 @@ function IssuesContent() {
   useEffect(() => {
     setPage(1);
     fetchIssues(1);
-  }, [search, category, status, sort]);
+  }, [fetchIssues]);
 
   const loadMore = () => {
     const nextPage = page + 1;
@@ -129,3 +129,4 @@ export default function IssuesPage() {
     </Suspense>
   );
 }
+

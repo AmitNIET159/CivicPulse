@@ -1,6 +1,7 @@
 import { Response } from 'express';
 import Issue from '../models/Issue';
 import User from '../models/User';
+import Notification from '../models/Notification';
 import { AuthRequest } from '../middleware/auth.middleware';
 
 // GET /api/official/issues
@@ -34,7 +35,12 @@ export const getOfficialIssues = async (req: AuthRequest, res: Response): Promis
       pagination: { page: pageNum, limit: limitNum, total, pages: Math.ceil(total / limitNum) },
     });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('Official controller error:', error);
+    if (error.name === 'CastError') {
+      res.status(400).json({ message: 'Invalid ID format.' });
+      return;
+    }
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 
@@ -75,7 +81,12 @@ export const updateIssueStatus = async (req: AuthRequest, res: Response): Promis
 
     res.json({ message: 'Status updated.', issue: updated });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('Official controller error:', error);
+    if (error.name === 'CastError') {
+      res.status(400).json({ message: 'Invalid ID format.' });
+      return;
+    }
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 
@@ -90,6 +101,12 @@ export const assignIssue = async (req: AuthRequest, res: Response): Promise<void
       res.status(400).json({ message: 'Invalid official.' }); return;
     }
 
+    const existingIssue = await Issue.findById(id);
+    if (!existingIssue) { res.status(404).json({ message: 'Issue not found.' }); return; }
+
+    // Check if the assignment is actually changing to prevent duplicate notifications
+    const isNewAssignment = existingIssue.assignedTo?.toString() !== officialId.toString();
+
     const updated = await Issue.findByIdAndUpdate(
       id,
       { assignedTo: officialId },
@@ -100,9 +117,25 @@ export const assignIssue = async (req: AuthRequest, res: Response): Promise<void
 
     if (!updated) { res.status(404).json({ message: 'Issue not found.' }); return; }
 
+    // STEP 6: Duplicate Prevention — only notify if assignment changed
+    if (isNewAssignment) {
+      await Notification.create({
+        recipient: officialId,
+        type: 'assignment',
+        title: 'New Task Assigned',
+        message: `Admin has assigned you a new civic issue: ${updated.title}`,
+        relatedIssue: updated._id,
+      });
+    }
+
     res.json({ message: 'Issue assigned.', issue: updated });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('Official controller error:', error);
+    if (error.name === 'CastError') {
+      res.status(400).json({ message: 'Invalid ID format.' });
+      return;
+    }
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 
@@ -116,6 +149,11 @@ export const getTeam = async (req: AuthRequest, res: Response): Promise<void> =>
     const officials = await User.find(filter).select('name email ward department isVerified avatar role').lean();
     res.json({ officials });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('Official controller error:', error);
+    if (error.name === 'CastError') {
+      res.status(400).json({ message: 'Invalid ID format.' });
+      return;
+    }
+    res.status(500).json({ message: 'Server error.' });
   }
 };

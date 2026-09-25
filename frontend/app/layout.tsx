@@ -3,9 +3,22 @@ import { Toaster } from 'react-hot-toast';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'CivicPulse — Report. Vote. Resolve.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://civic-pulse-xi.vercel.app'),
+  title: 'CivicPulse - Report. Vote. Resolve.',
   description: 'Hyperlocal civic issue reporting platform. Report potholes, broken streetlights, garbage, and more. Vote to prioritize. Officials resolve.',
   keywords: ['civic', 'issue', 'reporting', 'pothole', 'streetlight', 'municipal', 'government'],
+  openGraph: {
+    title: 'CivicPulse - Report. Vote. Resolve.',
+    description: 'Hyperlocal civic issue reporting platform.',
+    url: '/',
+    siteName: 'CivicPulse',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'CivicPulse - Report. Vote. Resolve.',
+    description: 'Hyperlocal civic issue reporting platform.',
+  },
 };
 
 export default function RootLayout({
@@ -52,3 +65,4 @@ export default function RootLayout({
     </html>
   );
 }
+

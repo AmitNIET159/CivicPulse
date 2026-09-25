@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -188,3 +189,4 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
     </div>
   );
 }
+

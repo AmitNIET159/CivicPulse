@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTeam = exports.assignIssue = exports.updateIssueStatus = exports.getOfficialIssues = void 0;
 const Issue_1 = __importDefault(require("../models/Issue"));
 const User_1 = __importDefault(require("../models/User"));
+const Notification_1 = __importDefault(require("../models/Notification"));
 // GET /api/official/issues
 const getOfficialIssues = async (req, res) => {
     try {
@@ -40,7 +41,12 @@ const getOfficialIssues = async (req, res) => {
         });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Official controller error:', error);
+        if (error.name === 'CastError') {
+            res.status(400).json({ message: 'Invalid ID format.' });
+            return;
+        }
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.getOfficialIssues = getOfficialIssues;
@@ -86,7 +92,12 @@ const updateIssueStatus = async (req, res) => {
         res.json({ message: 'Status updated.', issue: updated });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Official controller error:', error);
+        if (error.name === 'CastError') {
+            res.status(400).json({ message: 'Invalid ID format.' });
+            return;
+        }
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.updateIssueStatus = updateIssueStatus;
@@ -100,6 +111,13 @@ const assignIssue = async (req, res) => {
             res.status(400).json({ message: 'Invalid official.' });
             return;
         }
+        const existingIssue = await Issue_1.default.findById(id);
+        if (!existingIssue) {
+            res.status(404).json({ message: 'Issue not found.' });
+            return;
+        }
+        // Check if the assignment is actually changing to prevent duplicate notifications
+        const isNewAssignment = existingIssue.assignedTo?.toString() !== officialId.toString();
         const updated = await Issue_1.default.findByIdAndUpdate(id, { assignedTo: officialId }, { new: true })
             .populate('reportedBy', 'name avatar')
             .populate('assignedTo', 'name department ward');
@@ -107,10 +125,25 @@ const assignIssue = async (req, res) => {
             res.status(404).json({ message: 'Issue not found.' });
             return;
         }
+        // STEP 6: Duplicate Prevention — only notify if assignment changed
+        if (isNewAssignment) {
+            await Notification_1.default.create({
+                recipient: officialId,
+                type: 'assignment',
+                title: 'New Task Assigned',
+                message: `Admin has assigned you a new civic issue: ${updated.title}`,
+                relatedIssue: updated._id,
+            });
+        }
         res.json({ message: 'Issue assigned.', issue: updated });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Official controller error:', error);
+        if (error.name === 'CastError') {
+            res.status(400).json({ message: 'Invalid ID format.' });
+            return;
+        }
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.assignIssue = assignIssue;
@@ -125,7 +158,12 @@ const getTeam = async (req, res) => {
         res.json({ officials });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Official controller error:', error);
+        if (error.name === 'CastError') {
+            res.status(400).json({ message: 'Invalid ID format.' });
+            return;
+        }
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.getTeam = getTeam;

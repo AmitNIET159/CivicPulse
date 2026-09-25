@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Filter, MapPin, X, Crosshair } from 'lucide-react';
@@ -17,11 +17,7 @@ export default function MapPage() {
   const [category, setCategory] = useState('');
   const [status, setStatus] = useState('');
 
-  useEffect(() => {
-    fetchIssues();
-  }, [category, status]);
-
-  const fetchIssues = async () => {
+  const fetchIssues = useCallback(async () => {
     setLoading(true);
     try {
       const params: any = { limit: 200 };
@@ -34,7 +30,11 @@ export default function MapPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [category, status]);
+
+  useEffect(() => {
+    fetchIssues();
+  }, [fetchIssues]);
 
   const findNearMe = () => {
     if (!navigator.geolocation) {
@@ -195,3 +195,5 @@ export default function MapPage() {
     </div>
   );
 }
+
+

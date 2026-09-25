@@ -22,7 +22,7 @@ router.post('/login', rateLimit_middleware_1.authLimiter, [
     (0, express_validator_1.body)('email').isEmail().normalizeEmail(),
     (0, express_validator_1.body)('password').notEmpty(),
 ], auth_controller_1.login);
-router.post('/refresh', auth_controller_1.refreshAccessToken);
+router.post('/refresh', rateLimit_middleware_1.authLimiter, auth_controller_1.refreshAccessToken);
 router.post('/logout', auth_middleware_1.authenticate, auth_controller_1.logout);
 router.get('/me', auth_middleware_1.authenticate, auth_controller_1.getMe);
 exports.default = router;

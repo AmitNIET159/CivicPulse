@@ -25,7 +25,8 @@ export const getOverview = async (_req: Request, res: Response): Promise<void> =
 
     res.json({ totalIssues, resolved, pending, inProgress, avgResolutionTime });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('Stats controller error:', error);
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 
@@ -38,7 +39,8 @@ export const getByCategory = async (_req: Request, res: Response): Promise<void>
     ]);
     res.json({ data: result.map((r) => ({ category: r._id, count: r.count })) });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('Stats controller error:', error);
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 
@@ -51,7 +53,8 @@ export const getByStatus = async (_req: Request, res: Response): Promise<void> =
     ]);
     res.json({ data: result.map((r) => ({ status: r._id, count: r.count })) });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('Stats controller error:', error);
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 
@@ -78,7 +81,8 @@ export const getHeatmapData = async (req: Request, res: Response): Promise<void>
 
     res.json({ points });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('Stats controller error:', error);
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 
@@ -98,7 +102,8 @@ export const getTrends = async (_req: Request, res: Response): Promise<void> => 
     ]);
     res.json({ data: result.map((r) => ({ date: r._id, count: r.count })) });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('Stats controller error:', error);
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 
@@ -131,6 +136,7 @@ export const getResolutionTime = async (_req: Request, res: Response): Promise<v
       })),
     });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('Stats controller error:', error);
+    res.status(500).json({ message: 'Server error.' });
   }
 };

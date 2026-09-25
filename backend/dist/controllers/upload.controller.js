@@ -12,6 +12,11 @@ const uploadImage = async (req, res) => {
             res.status(400).json({ message: 'No image file provided.' });
             return;
         }
+        // Minimum file size: 5KB
+        if (file.size < 5 * 1024) {
+            res.status(400).json({ message: 'Image must be at least 5KB.' });
+            return;
+        }
         const result = await new Promise((resolve, reject) => {
             const uploadStream = cloudinary_1.default.uploader.upload_stream({
                 folder: 'civicpulse/issues',
@@ -31,7 +36,8 @@ const uploadImage = async (req, res) => {
         });
     }
     catch (error) {
-        res.status(500).json({ message: 'Upload failed.', error: error.message });
+        console.error('Cloudinary upload error:', error.message, error.http_code || '', error);
+        res.status(500).json({ message: 'Upload failed.' });
     }
 };
 exports.uploadImage = uploadImage;
@@ -47,7 +53,8 @@ const deleteImage = async (req, res) => {
         res.json({ message: 'Image deleted successfully.' });
     }
     catch (error) {
-        res.status(500).json({ message: 'Delete failed.', error: error.message });
+        console.error('Delete image error:', error);
+        res.status(500).json({ message: 'Delete failed.' });
     }
 };
 exports.deleteImage = deleteImage;

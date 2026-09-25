@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -14,6 +15,7 @@ import { formatDate, timeAgo } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import DepthCard from '@/components/ui/DepthCard';
+import CommentSection from '@/components/issues/CommentSection';
 
 const IssueMap = dynamic(() => import('@/components/map/IssueMap'), { ssr: false });
 
@@ -194,6 +196,9 @@ export default function IssueDetailPage() {
                 )}
               </DepthCard>
             )}
+
+            {/* Comments */}
+            <CommentSection issueId={issue._id} />
           </div>
 
           {/* Sidebar */}
@@ -256,3 +261,4 @@ export default function IssueDetailPage() {
     </div>
   );
 }
+

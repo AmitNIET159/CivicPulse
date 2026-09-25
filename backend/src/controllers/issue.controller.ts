@@ -30,8 +30,10 @@ export const getIssues = async (req: Request, res: Response): Promise<void> => {
       search,
     } = req.query;
 
-    const pageNum = parseInt(page as string, 10);
-    const limitNum = parseInt(limit as string, 10);
+    const parsedPage = parseInt(page as string, 10);
+    const parsedLimit = parseInt(limit as string, 10);
+    const pageNum = isNaN(parsedPage) || parsedPage < 1 ? 1 : parsedPage;
+    const limitNum = isNaN(parsedLimit) || parsedLimit < 1 ? 20 : Math.min(parsedLimit, 100);
     const skip = (pageNum - 1) * limitNum;
 
     // Build filter
@@ -53,19 +55,28 @@ export const getIssues = async (req: Request, res: Response): Promise<void> => {
     if (sort === 'votes') sortObj = { voteCount: -1 };
     if (sort === 'updated') sortObj = { updatedAt: -1 };
 
-    const [issues, total] = await Promise.all([
-      Issue.find(filter)
-        .sort(sortObj)
-        .skip(skip)
-        .limit(limitNum)
-        .populate('reportedBy', 'name avatar')
-        .populate('assignedTo', 'name department')
-        .lean(),
-      Issue.countDocuments(filter),
-    ]);
+    const issues = await Issue.find(filter)
+      .sort(sortObj)
+      .skip(skip)
+      .limit(limitNum)
+      .select('-statusHistory -officialComment')
+      .populate('reportedBy', 'name avatar')
+      .populate('assignedTo', 'name department')
+      .lean();
+      
+    const total = await Issue.countDocuments(filter);
 
-    res.json({
-      issues,
+      const userId = (req as any).user?._id?.toString();
+      const processedIssues = issues.map((issue: any) => {
+        const hasVoted = userId ? issue.voters?.some((v: any) => v.toString() === userId) : false;
+        return {
+          ...issue,
+          voters: hasVoted ? [userId] : []
+        };
+      });
+
+      res.json({
+        issues: processedIssues,
       pagination: {
         page: pageNum,
         limit: limitNum,
@@ -74,7 +85,8 @@ export const getIssues = async (req: Request, res: Response): Promise<void> => {
       },
     });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('getIssues error:', error);
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 
@@ -115,29 +127,43 @@ export const getNearbyIssues = async (req: Request, res: Response): Promise<void
         },
       },
       { $unwind: { path: '$reportedBy', preserveNullAndEmptyArrays: true } },
+      { $project: { statusHistory: 0, officialComment: 0, voters: 0 } },
     ]);
 
     res.json({ issues });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('getNearbyIssues error:', error);
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 
 // GET /api/issues/priority — Top issues sorted by priority
 export const getPriorityIssues = async (req: Request, res: Response): Promise<void> => {
   try {
-    const limit = parseInt((req.query.limit as string) || '20', 10);
+    const parsedLimit = parseInt((req.query.limit as string) || '20', 10);
+    const limit = isNaN(parsedLimit) || parsedLimit < 1 ? 20 : Math.min(parsedLimit, 100);
 
     const issues = await Issue.find({ status: { $nin: ['resolved', 'rejected'] } })
       .sort({ priority: -1 })
       .limit(limit)
+      .select('-statusHistory -officialComment')
       .populate('reportedBy', 'name avatar')
       .populate('assignedTo', 'name department')
       .lean();
 
-    res.json({ issues });
+    const userId = (req as any).user?._id?.toString();
+    const processedIssues = issues.map((issue: any) => {
+      const hasVoted = userId ? issue.voters?.some((v: any) => v.toString() === userId) : false;
+      return {
+        ...issue,
+        voters: hasVoted ? [userId] : []
+      };
+    });
+
+    res.json({ issues: processedIssues });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('getPriorityIssues error:', error);
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 
@@ -157,7 +183,12 @@ export const getIssueById = async (req: Request, res: Response): Promise<void> =
 
     res.json({ issue });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('Issue controller error:', error);
+    if (error.name === 'CastError') {
+      res.status(400).json({ message: 'Invalid ID format.' });
+      return;
+    }
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 
@@ -232,7 +263,12 @@ export const createIssue = async (req: AuthRequest, res: Response): Promise<void
       issue: populated,
     });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('Issue controller error:', error);
+    if (error.name === 'CastError') {
+      res.status(400).json({ message: 'Invalid ID format.' });
+      return;
+    }
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 
@@ -262,7 +298,12 @@ export const updateIssue = async (req: AuthRequest, res: Response): Promise<void
 
     res.json({ message: 'Issue updated.', issue: updated });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('Issue controller error:', error);
+    if (error.name === 'CastError') {
+      res.status(400).json({ message: 'Invalid ID format.' });
+      return;
+    }
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 
@@ -281,7 +322,12 @@ export const deleteIssue = async (req: AuthRequest, res: Response): Promise<void
 
     res.json({ message: 'Issue deleted successfully.' });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('Issue controller error:', error);
+    if (error.name === 'CastError') {
+      res.status(400).json({ message: 'Invalid ID format.' });
+      return;
+    }
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 
@@ -331,6 +377,11 @@ export const toggleVote = async (req: AuthRequest, res: Response): Promise<void>
       isVoted: !hasVoted,
     });
   } catch (error: any) {
-    res.status(500).json({ message: 'Server error.', error: error.message });
+    console.error('Issue controller error:', error);
+    if (error.name === 'CastError') {
+      res.status(400).json({ message: 'Invalid ID format.' });
+      return;
+    }
+    res.status(500).json({ message: 'Server error.' });
   }
 };

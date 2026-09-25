@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useState, useCallback } from 'react';
@@ -151,3 +152,4 @@ export default function IssueFormPhotoUpload({ photos, onPhotosChange }: IssueFo
     </div>
   );
 }
+

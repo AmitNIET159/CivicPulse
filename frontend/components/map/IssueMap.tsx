@@ -153,7 +153,7 @@ export default function IssueMap({
       map.remove();
       mapRef.current = null;
     };
-  }, []);
+  }, [center, interactive, onMapClick, zoom]);
 
   useEffect(() => {
     initMap();
@@ -163,14 +163,14 @@ export default function IssueMap({
         mapRef.current = null;
       }
     };
-  }, []);
+  }, [initMap]);
 
   // Auto-locate user when map is ready
   useEffect(() => {
     if (mapReady && showUserLocation) {
       locateUser(true);
     }
-  }, [mapReady, showUserLocation]);
+  }, [mapReady, showUserLocation, locateUser]);
 
   // Update markers when issues change
   useEffect(() => {
@@ -214,7 +214,9 @@ export default function IssueMap({
 
       const marker = L.marker([lat, lng], { icon });
 
-      const popupContent = `
+      marker.bindPopup('Loading...');
+      marker.on('popupopen', (e: any) => {
+        const popupContent = `
         <div style="min-width: 200px; padding: 4px;">
           <h4 style="font-weight: 600; margin-bottom: 4px; font-size: 14px;">${issue.title}</h4>
           <p style="color: #9CA3AF; font-size: 12px; margin-bottom: 8px;">${issue.address || 'No address'}</p>
@@ -229,8 +231,8 @@ export default function IssueMap({
           ">View Details</a>
         </div>
       `;
-
-      marker.bindPopup(popupContent);
+        e.popup.setContent(popupContent);
+      });
 
       if (onMarkerClick) {
         marker.on('click', () => onMarkerClick(issue));
@@ -241,7 +243,7 @@ export default function IssueMap({
 
     mapRef.current.addLayer(markerClusterGroup);
     markersRef.current = markerClusterGroup;
-  }, [issues, mapReady, showClusters]);
+  }, [issues, mapReady, showClusters, onMarkerClick]);
 
   // Handle selected position marker (for report form)
   useEffect(() => {
@@ -343,3 +345,6 @@ export default function IssueMap({
     </div>
   );
 }
+
+
+

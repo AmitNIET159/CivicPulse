@@ -6,13 +6,14 @@ const issue_controller_1 = require("../controllers/issue.controller");
 const auth_middleware_1 = require("../middleware/auth.middleware");
 const role_middleware_1 = require("../middleware/role.middleware");
 const rateLimit_middleware_1 = require("../middleware/rateLimit.middleware");
+const comment_controller_1 = require("../controllers/comment.controller");
 const router = (0, express_1.Router)();
 router.get('/', auth_middleware_1.optionalAuth, issue_controller_1.getIssues);
 router.get('/nearby', issue_controller_1.getNearbyIssues);
 router.get('/priority', issue_controller_1.getPriorityIssues);
 router.get('/:id', auth_middleware_1.optionalAuth, issue_controller_1.getIssueById);
 router.post('/', auth_middleware_1.authenticate, rateLimit_middleware_1.reportLimiter, [
-    (0, express_validator_1.body)('title').trim().isLength({ min: 3, max: 100 }).withMessage('Title must be 3-100 characters'),
+    (0, express_validator_1.body)('title').optional().trim().isLength({ max: 100 }).withMessage('Title cannot exceed 100 characters'),
     (0, express_validator_1.body)('description').trim().isLength({ min: 10, max: 1000 }),
     (0, express_validator_1.body)('category').isIn([
         'pothole', 'streetlight', 'garbage', 'drainage', 'water_supply',
@@ -24,5 +25,13 @@ router.post('/', auth_middleware_1.authenticate, rateLimit_middleware_1.reportLi
 router.put('/:id', auth_middleware_1.authenticate, (0, role_middleware_1.authorize)('official', 'admin'), issue_controller_1.updateIssue);
 router.delete('/:id', auth_middleware_1.authenticate, (0, role_middleware_1.authorize)('admin'), issue_controller_1.deleteIssue);
 router.post('/:id/vote', auth_middleware_1.authenticate, issue_controller_1.toggleVote);
+// Comments
+router.get('/:id/comments', auth_middleware_1.optionalAuth, comment_controller_1.getComments);
+router.post('/:id/comments', auth_middleware_1.authenticate, [
+    (0, express_validator_1.body)('content')
+        .trim()
+        .notEmpty().withMessage('Comment cannot be empty')
+        .isLength({ max: 500 }).withMessage('Comment cannot exceed 500 characters'),
+], comment_controller_1.createComment);
 exports.default = router;
 //# sourceMappingURL=issue.routes.js.map

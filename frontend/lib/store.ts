@@ -52,3 +52,44 @@ export const useMapStore = create<MapState>((set) => ({
   setCenter: (center) => set({ center }),
   setZoom: (zoom) => set({ zoom }),
 }));
+
+export interface AppNotification {
+  _id: string;
+  type: string;
+  title: string;
+  message: string;
+  relatedIssue?: string;
+  isRead: boolean;
+  createdAt: string;
+}
+
+interface NotificationState {
+  notifications: AppNotification[];
+  unreadCount: number;
+  isOpen: boolean;
+  setNotifications: (notifications: AppNotification[], unreadCount: number) => void;
+  markAsRead: (id: string) => void;
+  markAllAsRead: () => void;
+  setIsOpen: (isOpen: boolean) => void;
+}
+
+export const useNotificationStore = create<NotificationState>((set) => ({
+  notifications: [],
+  unreadCount: 0,
+  isOpen: false,
+  setNotifications: (notifications, unreadCount) => set({ notifications, unreadCount }),
+  markAsRead: (id) =>
+    set((state) => {
+      const updated = state.notifications.map((n) =>
+        n._id === id ? { ...n, isRead: true } : n
+      );
+      const unreadCount = updated.filter((n) => !n.isRead).length;
+      return { notifications: updated, unreadCount };
+    }),
+  markAllAsRead: () =>
+    set((state) => ({
+      notifications: state.notifications.map((n) => ({ ...n, isRead: true })),
+      unreadCount: 0,
+    })),
+  setIsOpen: (isOpen) => set({ isOpen }),
+}));

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -13,6 +14,7 @@ import AssignOfficer from '@/components/dashboard/AssignOfficer';
 import { formatDate, timeAgo } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+import CommentSection from '@/components/issues/CommentSection';
 
 const IssueMap = dynamic(() => import('@/components/map/IssueMap'), { ssr: false });
 
@@ -140,6 +142,9 @@ export default function OfficialIssueDetailPage() {
               })}
             </div>
           </div>
+
+          {/* Comments */}
+          <CommentSection issueId={issue._id} />
         </div>
 
         {/* Sidebar */}
@@ -159,3 +164,4 @@ export default function OfficialIssueDetailPage() {
     </div>
   );
 }
+

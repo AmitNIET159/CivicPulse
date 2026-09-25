@@ -28,7 +28,8 @@ const getOverview = async (_req, res) => {
         res.json({ totalIssues, resolved, pending, inProgress, avgResolutionTime });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Stats controller error:', error);
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.getOverview = getOverview;
@@ -42,7 +43,8 @@ const getByCategory = async (_req, res) => {
         res.json({ data: result.map((r) => ({ category: r._id, count: r.count })) });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Stats controller error:', error);
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.getByCategory = getByCategory;
@@ -56,7 +58,8 @@ const getByStatus = async (_req, res) => {
         res.json({ data: result.map((r) => ({ status: r._id, count: r.count })) });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Stats controller error:', error);
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.getByStatus = getByStatus;
@@ -82,7 +85,8 @@ const getHeatmapData = async (req, res) => {
         res.json({ points });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Stats controller error:', error);
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.getHeatmapData = getHeatmapData;
@@ -103,7 +107,8 @@ const getTrends = async (_req, res) => {
         res.json({ data: result.map((r) => ({ date: r._id, count: r.count })) });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Stats controller error:', error);
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.getTrends = getTrends;
@@ -137,7 +142,8 @@ const getResolutionTime = async (_req, res) => {
         });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Stats controller error:', error);
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.getResolutionTime = getResolutionTime;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,6 +8,7 @@ import { MapPin, FileText, Camera, CheckCircle, ArrowRight, ArrowLeft, Loader2 }
 import { CATEGORY_CONFIG, Photo } from '@/types';
 import api from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
+import { useIssueDraft } from '@/hooks/useIssueDraft';
 import GPSLocator from '@/components/map/GPSLocator';
 import IssueFormPhotoUpload from '@/components/issues/IssueForm';
 import toast from 'react-hot-toast';
@@ -28,6 +29,24 @@ export default function ReportPage() {
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
   const [photos, setPhotos] = useState<Photo[]>([]);
+
+  const { draftAvailable, saveDraft, clearDraft } = useIssueDraft();
+  const [draftHandled, setDraftHandled] = useState(false);
+
+  useEffect(() => {
+    // If an unhandled draft exists, check if user is making new manual edits to ignore it
+    if (draftAvailable && !draftHandled) {
+      if (category || description || address || coordinates) {
+        setDraftHandled(true);
+      }
+      return;
+    }
+
+    const handler = setTimeout(() => {
+      saveDraft({ category, description, address, coordinates });
+    }, 1000);
+    return () => clearTimeout(handler);
+  }, [category, description, address, coordinates, saveDraft, draftAvailable, draftHandled]);
 
   if (!isAuthenticated) {
     return (
@@ -78,7 +97,8 @@ export default function ReportPage() {
         address,
         photos,
       });
-      toast.success('Issue reported successfully! 🎉');
+      clearDraft();
+      toast.success('Issue reported successfully!');
       router.push(`/issues/${res.data.issue._id}`);
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Failed to submit');
@@ -99,6 +119,19 @@ export default function ReportPage() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-3xl font-bold mb-2 tracking-tight">Report an Issue</h1>
         <p className="text-text-muted mb-8">Help improve your community by reporting civic problems.</p>
+
+        {draftAvailable && !draftHandled && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8 bg-surface-2 border border-primary/20 rounded-xl p-4 flex items-center justify-between shadow-[0_0_15px_rgba(232,148,58,0.1)]">
+            <div>
+              <h3 className="font-semibold text-primary text-sm flex items-center gap-2"><FileText className="w-4 h-4"/> Unfinished Draft Found</h3>
+              <p className="text-xs text-text-muted mt-1">You have an unsaved issue report. Would you like to restore it?</p>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={() => { clearDraft(); setDraftHandled(true); }} className="px-3 py-1.5 text-xs font-medium text-text-muted hover:text-white transition-colors">Discard</button>
+              <button onClick={() => { setCategory(draftAvailable.category || ''); setDescription(draftAvailable.description || ''); setAddress(draftAvailable.address || ''); setCoordinates(draftAvailable.coordinates || null); setDraftHandled(true); toast.success('Draft restored'); }} className="px-3 py-1.5 bg-primary/20 text-primary border border-primary/30 rounded-lg text-xs font-medium hover:bg-primary hover:text-white transition-colors">Restore Draft</button>
+            </div>
+          </motion.div>
+        )}
 
         {/* Step indicator */}
         <div className="flex items-center gap-2 mb-8">
@@ -275,3 +308,6 @@ export default function ReportPage() {
     </div>
   );
 }
+
+
+

@@ -7,18 +7,25 @@ exports.getMe = exports.logout = exports.refreshAccessToken = exports.login = ex
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const User_1 = __importDefault(require("../models/User"));
+const express_validator_1 = require("express-validator");
+const crypto_1 = __importDefault(require("crypto"));
 // Generate tokens
 const generateAccessToken = (userId, role) => {
     return jsonwebtoken_1.default.sign({ userId, role }, process.env.JWT_ACCESS_SECRET, { expiresIn: 900 } // 15 minutes in seconds
     );
 };
 const generateRefreshToken = (userId) => {
-    return jsonwebtoken_1.default.sign({ userId }, process.env.JWT_REFRESH_SECRET, { expiresIn: 604800 } // 7 days in seconds
+    return jsonwebtoken_1.default.sign({ jti: crypto_1.default.randomBytes(16).toString('hex'), userId }, process.env.JWT_REFRESH_SECRET, { expiresIn: 604800 } // 7 days in seconds
     );
 };
 // POST /api/auth/register — Citizen registration
 const register = async (req, res) => {
     try {
+        const errors = (0, express_validator_1.validationResult)(req);
+        if (!errors.isEmpty()) {
+            res.status(400).json({ message: 'Validation error.', errors: errors.array() });
+            return;
+        }
         const { name, email, password } = req.body;
         const existingUser = await User_1.default.findOne({ email });
         if (existingUser) {
@@ -38,7 +45,12 @@ const register = async (req, res) => {
         // Store hashed refresh token
         const hashedRefresh = await bcryptjs_1.default.hash(refreshToken, 10);
         await User_1.default.findByIdAndUpdate(user._id, {
-            $push: { refreshTokens: hashedRefresh },
+            $push: {
+                refreshTokens: {
+                    $each: [hashedRefresh],
+                    $slice: -5
+                }
+            },
         });
         res.status(201).json({
             message: 'Registration successful.',
@@ -54,13 +66,19 @@ const register = async (req, res) => {
         });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Registration error:', error);
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.register = register;
 // POST /api/auth/register-official — Official registration (needs admin approval)
 const registerOfficial = async (req, res) => {
     try {
+        const errors = (0, express_validator_1.validationResult)(req);
+        if (!errors.isEmpty()) {
+            res.status(400).json({ message: 'Validation error.', errors: errors.array() });
+            return;
+        }
         const { name, email, password, ward, department } = req.body;
         const existingUser = await User_1.default.findOne({ email });
         if (existingUser) {
@@ -91,13 +109,19 @@ const registerOfficial = async (req, res) => {
         });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Official registration error:', error);
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.registerOfficial = registerOfficial;
 // POST /api/auth/login
 const login = async (req, res) => {
     try {
+        const errors = (0, express_validator_1.validationResult)(req);
+        if (!errors.isEmpty()) {
+            res.status(400).json({ message: 'Validation error.', errors: errors.array() });
+            return;
+        }
         const { email, password } = req.body;
         const user = await User_1.default.findOne({ email }).select('+password');
         if (!user) {
@@ -114,7 +138,12 @@ const login = async (req, res) => {
         // Store hashed refresh token
         const hashedRefresh = await bcryptjs_1.default.hash(refreshToken, 10);
         await User_1.default.findByIdAndUpdate(user._id, {
-            $push: { refreshTokens: hashedRefresh },
+            $push: {
+                refreshTokens: {
+                    $each: [hashedRefresh],
+                    $slice: -5 // Keep only the last 5 tokens to prevent unbounded growth
+                }
+            },
         });
         res.json({
             message: 'Login successful.',
@@ -134,7 +163,8 @@ const login = async (req, res) => {
         });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Login error:', error);
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.login = login;
@@ -169,11 +199,17 @@ const refreshAccessToken = async (req, res) => {
             return;
         }
         // Rotate: remove old, issue new
-        user.refreshTokens.splice(tokenIndex, 1);
         const newAccessToken = generateAccessToken(user._id.toString(), user.role);
         const newRefreshToken = generateRefreshToken(user._id.toString());
         const hashedRefresh = await bcryptjs_1.default.hash(newRefreshToken, 10);
-        user.refreshTokens.push(hashedRefresh);
+        // Filter out the used token
+        const updatedTokens = [...user.refreshTokens];
+        updatedTokens.splice(tokenIndex, 1);
+        updatedTokens.push(hashedRefresh);
+        // Bound it to 5
+        const finalTokens = updatedTokens.slice(-5);
+        user.refreshTokens = finalTokens;
+        user.markModified('refreshTokens');
         await user.save();
         res.json({
             accessToken: newAccessToken,
@@ -185,7 +221,12 @@ const refreshAccessToken = async (req, res) => {
             res.status(401).json({ message: 'Refresh token expired. Please login again.' });
             return;
         }
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        if (error.name === 'JsonWebTokenError') {
+            res.status(401).json({ message: 'Invalid refresh token.' });
+            return;
+        }
+        console.error('Refresh token error:', error);
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.refreshAccessToken = refreshAccessToken;
@@ -215,7 +256,8 @@ const logout = async (req, res) => {
         res.json({ message: 'Logged out successfully.' });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Logout error:', error);
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.logout = logout;
@@ -242,7 +284,8 @@ const getMe = async (req, res) => {
         });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error.', error: error.message });
+        console.error('Get profile error:', error);
+        res.status(500).json({ message: 'Server error.' });
     }
 };
 exports.getMe = getMe;

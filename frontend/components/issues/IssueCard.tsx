@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import Link from 'next/link';
@@ -37,7 +38,10 @@ export default function IssueCard({ issue, index = 0 }: IssueCardProps) {
               <img
                 src={issue.photos[0].thumbnail || issue.photos[0].url}
                 alt={issue.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+                width={400}
+                height={300}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 bg-surface-2"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
               <div className="absolute top-3 left-3">
@@ -99,3 +103,4 @@ export default function IssueCard({ issue, index = 0 }: IssueCardProps) {
     </motion.div>
   );
 }
+

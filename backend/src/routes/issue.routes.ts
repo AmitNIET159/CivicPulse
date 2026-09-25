@@ -8,6 +8,8 @@ import { authenticate, optionalAuth } from '../middleware/auth.middleware';
 import { authorize } from '../middleware/role.middleware';
 import { reportLimiter } from '../middleware/rateLimit.middleware';
 
+import { getComments, createComment } from '../controllers/comment.controller';
+
 const router = Router();
 
 router.get('/', optionalAuth, getIssues);
@@ -35,5 +37,19 @@ router.post(
 router.put('/:id', authenticate, authorize('official', 'admin'), updateIssue);
 router.delete('/:id', authenticate, authorize('admin'), deleteIssue);
 router.post('/:id/vote', authenticate, toggleVote);
+
+// Comments
+router.get('/:id/comments', optionalAuth, getComments);
+router.post(
+  '/:id/comments',
+  authenticate,
+  [
+    body('content')
+      .trim()
+      .notEmpty().withMessage('Comment cannot be empty')
+      .isLength({ max: 500 }).withMessage('Comment cannot exceed 500 characters'),
+  ],
+  createComment
+);
 
 export default router;

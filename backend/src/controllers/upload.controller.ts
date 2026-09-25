@@ -38,7 +38,7 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
     });
   } catch (error: any) {
     console.error('Cloudinary upload error:', error.message, error.http_code || '', error);
-    res.status(500).json({ message: 'Upload failed.', error: error.message });
+    res.status(500).json({ message: 'Upload failed.' });
   }
 };
 
@@ -53,6 +53,7 @@ export const deleteImage = async (req: Request, res: Response): Promise<void> =>
     await cloudinary.uploader.destroy(fullPublicId);
     res.json({ message: 'Image deleted successfully.' });
   } catch (error: any) {
-    res.status(500).json({ message: 'Delete failed.', error: error.message });
+    console.error('Delete image error:', error);
+    res.status(500).json({ message: 'Delete failed.' });
   }
 };
