@@ -19,7 +19,7 @@
 
 <br/>
 
-[🚀 Live Demo](#) · [📖 API Docs](#-api-documentation) · [🐛 Report Bug](https://github.com/your-repo/issues) · [✨ Request Feature](https://github.com/your-repo/issues)
+[🚀 Live Demo](https://civic-pulse-xi.vercel.app) · [📖 API Docs](#-api-documentation) · [🐛 Report Bug](https://github.com/your-repo/issues) · [✨ Request Feature](https://github.com/your-repo/issues)
 
 </div>
 
